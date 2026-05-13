@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :ai_connections
   get "ai/code_suggest"
   post "/ai/code_suggest", to: "ai#code_suggest"
   get "home/index"

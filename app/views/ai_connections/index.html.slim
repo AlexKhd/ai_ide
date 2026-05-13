@@ -1,0 +1,64 @@
+- if notice.present?
+  .mb-6.rounded-xl.bg-emerald-500.border.border-emerald-500.text-emerald-300.px-4.py-3.shadow-lg
+    = notice
+
+.flex.items-center.justify-between.mb-8
+  div
+    h1.text-4xl.font-bold.text-blue.tracking-tight
+      | AI Connections
+    p.text-gray-400.mt-1
+      | Manage your LLM providers and models
+
+  = link_to "New AI Connection",
+    new_ai_connection_path,
+    class: "inline-flex items-center rounded-xl bg-purple-600 hover:bg-purple-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
+
+- if @ai_connections.exists?
+  #ai_connections.grid.grid-cols-1.md:grid-cols-2.xl:grid-cols-3.gap-6
+    - @ai_connections.each do |ai_connection|
+      .rounded-2xl.bg-zinc-900.border.border-zinc-800.p-6.shadow-xl.hover:border-purple-500.transition-all.duration-200
+        .flex.items-start.justify-between
+          div
+            h2.text-2xl.font-semibold.text-white
+              = ai_connection.name
+
+            .mt-3.flex.flex-wrap.gap-2
+              span.inline-flex.items-center.rounded-full.bg-blue-500.text-blue-300.px-3.py-1.text-xs.font-medium.border.border-blue-500
+                = ai_connection.provider
+
+              span.inline-flex.items-center.rounded-full.bg-purple-500.text-purple-300.px-3.py-1.text-xs.font-medium.border.border-purple-500
+                = ai_connection.model
+
+          - if ai_connection.active?
+            .h-3.w-3.rounded-full.bg-emerald-400.animate-pulse
+
+        .mt-6.flex.items-center.justify-between
+          .flex.items-center.gap-4
+            = link_to "Show",
+              ai_connection,
+              class: "text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors"
+
+            = link_to "Edit",
+              edit_ai_connection_path(ai_connection),
+              class: "text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+
+          = link_to "Destroy", ai_connection,
+           data: {turbo_method: :delete, turbo_confirm: "Delete this AI connection?"},
+            class: "text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
+
+- else
+  .rounded-2xl.border.border-dashed.border-zinc-700.bg-zinc-900.p-12.text-center.shadow-inner
+    h2.text-3xl.font-bold.text-white
+      | No connections yet
+
+    p.mt-3.text-gray-400
+      | Add your first LLM provider to start using AI features.
+
+    .mt-6
+      = link_to "Create Connection",
+        new_ai_connection_path,
+        class: "inline-flex items-center rounded-xl bg-purple-600 hover:bg-purple-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
+
+.mt-10.flex.items-center.gap-4
+  = link_to "← Home", "/home/index",
+    class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"

@@ -1,0 +1,60 @@
+= form_with(model: ai_connection, class: "space-y-6") do |form|
+
+  - if ai_connection.errors.any?
+    .rounded-2xl.border.border-red-500.bg-red-500.p-5.shadow-lg
+      h2.text-lg.font-semibold.text-red-300.mb-3
+        = "#{pluralize(ai_connection.errors.count, "error")} prohibited this AI connection from being saved:"
+
+      ul.space-y-2
+        - ai_connection.errors.each do |error|
+          li.text-sm.text-red-200
+            = error.full_message
+
+  .rounded-2xl.bg-zinc-900.border.border-zinc-800.p-8.shadow-2xl.space-y-6
+
+    div
+      = form.label :name,
+        class: "block text-sm font-medium text-gray-300 mb-2"
+
+      = form.text_field :name,
+        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+
+    div
+      = form.label :provider,
+        class: "block text-sm font-medium text-gray-300 mb-2"
+
+      = form.select :provider,
+        AiConnection.provider_options,
+        {},
+        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+
+    div
+      = form.label :api_key,
+        class: "block text-sm font-medium text-gray-300 mb-2"
+
+      = form.password_field :api_key,
+        placeholder: "sk-...",
+        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+
+    div
+      = form.label :model,
+        class: "block text-sm font-medium text-gray-300 mb-2"
+
+      = form.text_field :model,
+        placeholder: "gpt-4.1-mini",
+        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+
+    div
+      label.flex.items-center.gap-3.cursor-pointer
+        = form.check_box :active,
+          class: "h-5 w-5 rounded border-zinc-700 bg-zinc-900 text-purple-600 focus:ring-purple-500"
+
+        span.text-sm.font-medium.text-gray-300
+          | Set as active connection
+
+    .pt-4.flex.items-center.gap-4
+      = form.submit class: "inline-flex items-center rounded-xl bg-purple-600 hover:bg-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 cursor-pointer"
+
+      = link_to "Cancel",
+        ai_connections_path,
+        class: "text-sm font-medium text-gray-400 hover:text-white transition-colors duration-200"
