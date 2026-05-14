@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { marked } from "marked"
 
 export default class extends Controller {
   static targets = ["container", "output"]
@@ -24,13 +25,18 @@ export default class extends Controller {
     })
   }
 
-  askAi() {
+  askAi(event) {  // ✅ Add event param
     if (!this.editor) {
       this.outputTarget.innerText = "Editor not ready yet!"
       return
     }
 
     const code = this.editor.getValue()
+    const button = event.currentTarget
+
+    button.disabled = true
+    button.classList.add("opacity-50", "cursor-not-allowed")
+    this.outputTarget.innerText = "Thinking..."
 
     fetch("/ai/code_suggest", {
       method: "POST",
@@ -40,10 +46,17 @@ export default class extends Controller {
       },
       body: JSON.stringify({ code: code })
     })
-      .then(res => res.json())
-      .then(data => {
-        this.outputTarget.innerText = data.suggestion
-      })
+    .then(res => res.json())
+    .then(data => {
+      this.outputTarget.innerHTML = marked.parse(data.suggestion)
+    })
+    .catch(error => {
+      this.outputTarget.innerHTML = `Error: ${error.message}`
+    })
+    .finally(() => {
+      button.disabled = false
+      button.classList.remove("opacity-50", "cursor-not-allowed")
+    })
   }
 
   csrfToken() {
