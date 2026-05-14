@@ -1,0 +1,6 @@
+#navbar.p-3.flex
+  .me-2.text-heading = link_to 'AI IDE - HOME', home_index_path, class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
+  .me-3 = link_to 'Connections', ai_connections_path, class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
+  - @current_connection ||= AiConnection.active_connection
+  #current-model.me-3 = "Current connection: #{@current_connection.name}/#{@current_connection.provider}"
+  = "LLMs list last update: #{AiModel.last.updated_at.in_time_zone.strftime("%H:%M")}"

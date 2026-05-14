@@ -7,6 +7,8 @@ class AiConnection < ApplicationRecord
     "OpenRouter"
   ].freeze
 
+  has_many :ai_models, dependent: :destroy
+
   scope :active, -> { find_by(active: true) }
 
   validates :name, presence: true, uniqueness: true

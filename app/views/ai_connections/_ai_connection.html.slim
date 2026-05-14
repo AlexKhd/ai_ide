@@ -1,13 +1,157 @@
-div id="#{dom_id ai_connection}"
-  p
-    strong Name:
-    =< ai_connection.name
-  p
-    strong Provider:
-    =< ai_connection.provider
-  p
-    strong Api key:
-    =< ai_connection.api_key
-  p
-    strong Model:
-    =< ai_connection.model
+div id=dom_id(ai_connection)
+  .rounded-3xl.bg-zinc-900.border.border-zinc-800.shadow-2xl.p-8.mb-8
+
+    .flex.items-start.justify-between.gap-6
+      div
+        h1.text-4xl.font-bold.text-white
+          = ai_connection.name
+
+        .mt-3.flex.flex-wrap.items-center.gap-3
+          span.inline-flex.items-center.rounded-full.bg-blue-500.text-blue-300.px-3.py-1.text-xs.font-semibold.border.border-blue-500
+            = ai_connection.provider
+
+          span.inline-flex.items-center.rounded-full.bg-purple-500.text-purple-300.px-3.py-1.text-xs.font-semibold.border.border-purple-500
+            = ai_connection.model
+
+          - if ai_connection.active?
+            span.inline-flex.items-center.rounded-full.bg-emerald-500.text-emerald-300.px-3.py-1.text-xs.font-semibold.border.border-emerald-500
+              | ACTIVE
+
+      .text-right
+        p.text-sm.text-gray-500 API Key
+        p.font-mono.text-sm.text-gray-300
+          = ai_connection.api_key.present? ? "••••••••#{ai_connection.api_key.last(4)}" : "No key"
+
+    .mt-8.grid.grid-cols-1.md:grid-cols-3.gap-4
+
+      .rounded-2xl.bg-zinc-950.border.border-zinc-800.p-5
+        p.text-sm.text-gray-500 Models
+        p.text-3xl.font-bold.text-white.mt-1
+          = @ai_models.count
+
+      .rounded-2xl.bg-zinc-950.border.border-zinc-800.p-5
+        p.text-sm.text-gray-500 Tool-capable
+        p.text-3xl.font-bold.text-white.mt-1
+          = @ai_models.where(supports_tools: true).count
+
+      .rounded-2xl.bg-zinc-950.border.border-zinc-800.p-5
+        p.text-sm.text-gray-500 Max Context
+        p.text-3xl.font-bold.text-white.mt-1
+          = number_with_delimiter(@ai_models.maximum(:context_length) || 0)
+
+.mt-10
+
+  .flex.items-center.justify-between.mb-6
+    div
+      h2.text-3xl.font-bold.text-white
+        | Available Models
+
+      p.text-gray-400.mt-1
+        | Filter and browse available LLMs
+
+    = link_to "Sync Models",
+      "#",
+      class: "rounded-xl bg-purple-600 hover:bg-purple-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
+
+  / FILTERS
+  .rounded-2xl.bg-zinc-900.border.border-zinc-800.p-5.mb-8
+    = form_with url: ai_connection_path(ai_connection),
+      method: :get,
+      local: true,
+      class: "grid grid-cols-1 md:grid-cols-4 gap-4" do |f|
+
+      div
+        = f.label :provider,
+          class: "block text-sm font-medium text-gray-300 mb-2"
+
+        = f.select :provider,
+          options_for_select(@ai_models.pluck(:provider).uniq.sort, params[:provider]),
+          { include_blank: "All providers" },
+          class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+
+      div
+        = f.label :supports_tools,
+          "Tools Support",
+          class: "block text-sm font-medium text-gray-300 mb-2"
+
+        = f.select :supports_tools,
+          [["Yes", true], ["No", false]],
+          { include_blank: "Any" },
+          class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+
+      div
+        = f.label :min_context,
+          "Min Context",
+          class: "block text-sm font-medium text-gray-300 mb-2"
+
+        = f.number_field :min_context,
+          value: params[:min_context],
+          placeholder: "100000",
+          class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"
+
+      .flex.items-end
+        = f.submit "Filter",
+          class: "w-full rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
+
+- if @ai_models.exists?
+
+  .space-y-4
+    - @ai_models.each do |model|
+
+      .rounded-2xl.bg-zinc-900.border.border-zinc-800.p-6.hover:border-purple-500.transition-all.duration-200.shadow-lg
+
+        .flex.items-start.justify-between.gap-6
+
+          div.flex-1
+            .flex.items-center.gap-3.flex-wrap
+              h3.text-xl.font-bold.text-white
+                = model.name
+
+              span.inline-flex.items-center.rounded-full.bg-zinc-800.text-gray-300.px-3.py-1.text-xs.font-medium
+                = model.provider
+
+              - if model.supports_tools?
+                span.inline-flex.items-center.rounded-full.bg-emerald-500.text-emerald-300.px-3.py-1.text-xs.font-semibold.border.border-emerald-500
+                  | TOOLS
+
+              - if model.supports_reasoning?
+                span.inline-flex.items-center.rounded-full.bg-orange-500.text-orange-300.px-3.py-1.text-xs.font-semibold.border.border-orange-500
+                  | REASONING
+
+            p.mt-2.text-sm.text-gray-400.font-mono
+              = model.external_id
+
+            .mt-5.grid.grid-cols-2.md:grid-cols-4.gap-4
+
+              div
+                p.text-xs.text-gray-500 Context
+                p.text-lg.font-semibold.text-white
+                  = number_with_delimiter(model.context_length)
+
+              div
+                p.text-xs.text-gray-500 Prompt
+                p.text-lg.font-semibold.text-emerald-300
+                  = "$#{model.prompt_price}"
+
+              div
+                p.text-xs.text-gray-500 Completion
+                p.text-lg.font-semibold.text-blue-300
+                  = "$#{model.completion_price}"
+
+              div
+                p.text-xs.text-gray-500 Modalities
+                p.text-sm.text-gray-300
+                  = Array(model.input_modalities).join(", ")
+
+        - if model.raw.present? && model.raw["description"].present?
+          .mt-5.text-sm.text-gray-400.leading-relaxed
+            = truncate(model.raw["description"], length: 220)
+
+- else
+
+  .rounded-2xl.border.border-dashed.border-zinc-700.bg-zinc-900.p-12.text-center
+    h3.text-2xl.font-bold.text-white
+      | No AI models found
+
+    p.mt-3.text-gray-400
+      | Sync models from OpenRouter to populate this list.

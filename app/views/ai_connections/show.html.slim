@@ -2,9 +2,5 @@ p style="color: green" = notice
 
 == render @ai_connection
 
-div
-  => link_to "Edit this ai connection", edit_ai_connection_path(@ai_connection)
-  '|
-  =< link_to "Back to ai connections", ai_connections_path
-
-  = button_to "Destroy this ai connection", @ai_connection, method: :delete
+.mt-3
+  =< link_to "Back to ai connections", ai_connections_path, class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"

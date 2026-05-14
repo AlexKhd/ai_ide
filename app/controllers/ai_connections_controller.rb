@@ -8,6 +8,10 @@ class AiConnectionsController < ApplicationController
 
   # GET /ai_connections/1 or /ai_connections/1.json
   def show
+    @ai_models = @ai_connection.ai_models.where(prompt_price: 0, completion_price: 0)
+    if params[:provider].present?
+      @ai_models = @ai_models.where(provider: params[:provider])
+    end
   end
 
   # GET /ai_connections/new
