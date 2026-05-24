@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_13_210621) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_20_110406) do
   create_table "ai_connections", force: :cascade do |t|
     t.string "name"
     t.string "provider"
@@ -37,6 +37,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_13_210621) do
     t.json "raw"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "active", default: true, null: false
+    t.index ["active"], name: "index_ai_models_on_active"
     t.index ["ai_connection_id", "external_id"], name: "index_ai_models_on_ai_connection_id_and_external_id", unique: true
     t.index ["ai_connection_id"], name: "index_ai_models_on_ai_connection_id"
     t.index ["provider"], name: "index_ai_models_on_provider"

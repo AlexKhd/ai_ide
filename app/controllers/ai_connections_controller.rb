@@ -4,11 +4,27 @@ class AiConnectionsController < ApplicationController
   # GET /ai_connections or /ai_connections.json
   def index
     @ai_connections = AiConnection.all
+    @models = AiModel.ordered
+  end
+
+  def sync_models
+    service = OpenRouter::AiModelsSyncPreviewService.new
+    @diffs = service.call
+
+    @ai_connections = AiConnection.all
+    @models = AiModel.all
+
+    render :index
+  end
+
+  def apply_sync
+    OpenRouter::AiModelsSyncService.new.call
+    redirect_to ai_connections_path, notice: "Models synced successfully"
   end
 
   # GET /ai_connections/1 or /ai_connections/1.json
   def show
-    @ai_models = @ai_connection.ai_models.where(prompt_price: 0, completion_price: 0)
+    @ai_models = @ai_connection.ai_models.zero_cost.ordered
     if params[:provider].present?
       @ai_models = @ai_models.where(provider: params[:provider])
     end
@@ -40,6 +56,8 @@ class AiConnectionsController < ApplicationController
 
   # PATCH/PUT /ai_connections/1 or /ai_connections/1.json
   def update
+    model_external_id = AiModel.find(params[:model][:external_id]).external_id
+    @ai_connection.model = model_external_id
     respond_to do |format|
       if @ai_connection.update(ai_connection_params)
         format.html { redirect_to ai_connections_path, notice: "Ai connection was successfully updated.", status: :see_other }

@@ -32,17 +32,16 @@
       = form.label :api_key,
         class: "block text-sm font-medium text-gray-300 mb-2"
 
-      = form.password_field :api_key,
-        placeholder: "sk-...",
-        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+      = form.password_field :api_key, placeholder: "sk-...", value: Rails.application.credentials.openrouter_api_key,
+       class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
 
     div
       = form.label :model,
         class: "block text-sm font-medium text-gray-300 mb-2"
 
-      = form.text_field :model,
-        placeholder: "gpt-4.1-mini",
-        class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200"
+      = select_tag "model_id", options_from_collection_for_select(AiModel.zero_cost.ordered_ext_id, 'id', 'external_id'),
+       class: "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500\/20 outline-none transition-all duration-200",
+        name: 'model[external_id]'
 
     div
       label.flex.items-center.gap-3.cursor-pointer

@@ -1,5 +1,7 @@
 class HomeController < ApplicationController
   def index
-    @current_connection = AiConnection.active_connection
+  end
+
+  def dashboard
   end
 end

@@ -1,8 +1,16 @@
 Rails.application.routes.draw do
+  root "home#dashboard"
   resources :ai_connections
   get "ai/code_suggest"
   post "/ai/code_suggest", to: "ai#code_suggest"
+  get "ai/code_suggestsse"
   get "home/index"
+  resources :ai_connections do
+    collection do
+      post :sync_models
+      post :apply_sync
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

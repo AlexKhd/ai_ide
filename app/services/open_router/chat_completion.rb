@@ -17,6 +17,8 @@ module OpenRouter
 
       request["Authorization"] = "Bearer #{connection.api_key}"
       request["Content-Type"] = "application/json"
+      request["HTTP-Referer"] = "http://localhost:3000"
+      request["X-Title"] = "AI IDE"
 
       request.body = {
         model: connection.model,
@@ -40,9 +42,22 @@ module OpenRouter
         http.request(request)
       end
 
+      Rails.logger.info "OPENROUTER STATUS: #{response.code}"
+      Rails.logger.info "OPENROUTER BODY: #{response.body}"
+
       json = JSON.parse(response.body)
 
-      json.dig("choices", 0, "message", "content")
+      if json["error"]
+        raise StandardError, json["error"]["message"]
+      end
+
+      content = json.dig("choices", 0, "message", "content")
+
+      if content.blank?
+        raise StandardError, "No completion returned"
+      end
+
+      content
     end
 
     private

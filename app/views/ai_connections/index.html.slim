@@ -20,7 +20,7 @@
         .flex.items-start.justify-between
           div
             h2.text-2xl.font-semibold.text-white
-              = ai_connection.name
+              = "#{ai_connection.name} | Models count: #{ai_connection.ai_models.zero_cost.count}"
 
             .mt-3.flex.flex-wrap.gap-2
               span.inline-flex.items-center.rounded-full.bg-blue-500.text-blue-300.px-3.py-1.text-xs.font-medium.border.border-blue-500
@@ -62,3 +62,113 @@
 .mt-10.flex.items-center.gap-4
   = link_to "← Home", "/home/index",
     class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
+
+.flex.items-center.justify-between.mt-8.mb-4
+  h1.text-4xl.font-bold.text-blue.tracking-tight
+    | Models
+
+  .flex.items-center.gap-4
+    = button_to "Sync Models",
+      sync_models_ai_connections_path,
+      method: :post,
+      data: { turbo: false },
+      class: "rounded-xl bg-emerald-600 hover:bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
+
+  .flex.items-center.gap-4
+    = button_to "Apply Sync", apply_sync_ai_connections_path, method: :post,
+     data: { turbo_confirm: "Apply model changes?" }, class: "rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+
+- if @diffs.present?
+
+  .mt-8.space-y-8
+
+    - if @diffs[:added].any?
+      .rounded-2xl.bg-emerald-950.border.border-emerald-700.p-6
+        h2.text-2xl.font-bold.text-emerald-300.mb-4
+          | New Models
+
+        table.table
+          thead
+            tr
+              th Name
+              th ID
+              th Context
+
+          tbody
+            - @diffs[:added].each do |model|
+              tr
+                td = model["name"]
+                td = model["id"]
+                td = number_with_delimiter(model["context_length"])
+
+    - else
+      p.text-green No added models
+
+    - if @diffs[:removed].any?
+      .rounded-2xl.bg-red-950.border.border-red-700.p-6
+        h2.text-2xl.font-bold.text-red-300.mb-4
+          | Removed Models
+
+        table.table
+          thead
+            tr
+              th Name
+              th External ID
+
+          tbody
+            - @diffs[:removed].each do |model|
+              tr
+                td = model.name
+                td = model.external_id
+
+    - if @diffs[:changed].any?
+      .rounded-2xl.bg-yellow-950.border.border-yellow-700.p-6
+        h2.text-2xl.font-bold.text-yellow-300.mb-4
+          | Changed Models
+
+        - @diffs[:changed].each do |model|
+          .mb-6.pb-6.border-b.border-yellow-800
+            h3.text-lg.font-semibold.text-white
+              = model[:name]
+
+            table.table.mt-3
+              thead
+                tr
+                  th Field
+                  th Old
+                  th New
+
+              tbody
+                - model[:changes].each do |field, values|
+                  tr
+                    td = field
+                    td = values[0]
+                    td = values[1]
+
+table.table
+  thead
+    tr
+      th ID
+      th Name
+      th Provider
+      th Context Length
+      th Input
+      th Output
+      th Tools
+      th Reasoning
+      th Prompt Price
+      th Completion Price
+
+  tbody
+    - @models.each do |model|
+      tr
+        td = model.id
+        td = model.name
+        td = model.provider
+        td = number_with_delimiter(model.context_length)
+        td = model.input_modalities.join(", ")
+        td = model.output_modalities.join(", ")
+        td = model.supports_tools ? "Yes" : "No"
+        td = model.supports_reasoning ? "Yes" : "No"
+        td = model.prompt_price
+        td = model.completion_price

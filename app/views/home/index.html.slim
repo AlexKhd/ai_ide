@@ -1,7 +1,9 @@
 div data-controller="editor"
-  button#ask-ai.btn-ai.bg-purple-700.mt-1 data-action="click->editor#askAi"
+  button#ask-ai.btn-ai.bg-purple-700.mt-1.ms-3 data-action="click->editor#askAi"
     | Ask AI
-
+  button#ask-ai.btn-ai.bg-green-700.mt-1.ms-3 data-action="click->editor#askAiSse"
+    | Ask AI SSE
   #editor data-editor-target="container" style="width:100%; height:500px; border:1px solid #ccc;"
 
-  #ai-output.text-shadow-neon data-editor-target="output"
+  #ai-output.text-shadow-neon data-editor-target="output" The answer is here..
+  #ai-output-error.text-shadow-neon data-editor-target="outputerror" = '/errors if any/'
