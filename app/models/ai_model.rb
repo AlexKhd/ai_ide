@@ -3,7 +3,7 @@ class AiModel < ApplicationRecord
   scope :ordered, -> { order(:name) }
   scope :ordered_ext_id, -> { order(:external_id) }
 
-  belongs_to :ai_connection
+  has_many :ai_connections, foreign_key: :model_id, dependent: :nullify
 
-  validates :external_id, uniqueness: { scope: :ai_connection_id }
+  validates :external_id, presence: true, uniqueness: true
 end

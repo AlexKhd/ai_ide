@@ -1,0 +1,15 @@
+one:
+  id: 1
+  external_id: ModelExtId
+  name: ModelName_1
+  provider: provider_1
+  context_length: 1000
+  input_modalities: ["text"]
+  output_modalities: ["text"]
+  supports_tools: false
+  supports_reasoning: false
+  prompt_price: 0
+  completion_price: 0
+  architecture: ""
+  raw: ""
+  active: true

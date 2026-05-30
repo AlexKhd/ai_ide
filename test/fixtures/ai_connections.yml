@@ -1,13 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  provider: MyString
-  api_key: MyString
-  model: MyString
+  id: 1
+  name: Connection_1
+  provider: OpenAI
+  api_key: APIKEY
+  active: true
+  model_id: 1
 
 two:
-  name: MyString
-  provider: MyString
-  api_key: MyString
-  model: MyString
+  name: Connection_2
+  provider: Anthropic
+  api_key: APIKEY

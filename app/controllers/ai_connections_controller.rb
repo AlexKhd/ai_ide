@@ -24,7 +24,7 @@ class AiConnectionsController < ApplicationController
 
   # GET /ai_connections/1 or /ai_connections/1.json
   def show
-    @ai_models = @ai_connection.ai_models.zero_cost.ordered
+    @ai_models = AiModel.zero_cost.ordered
     if params[:provider].present?
       @ai_models = @ai_models.where(provider: params[:provider])
     end
@@ -56,8 +56,7 @@ class AiConnectionsController < ApplicationController
 
   # PATCH/PUT /ai_connections/1 or /ai_connections/1.json
   def update
-    model_external_id = AiModel.find(params[:model][:external_id]).external_id
-    @ai_connection.model = model_external_id
+    @ai_connection.model_id = params[:model][:external_id]
     respond_to do |format|
       if @ai_connection.update(ai_connection_params)
         format.html { redirect_to ai_connections_path, notice: "Ai connection was successfully updated.", status: :see_other }

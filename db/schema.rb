@@ -10,19 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_20_110406) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_30_134503) do
   create_table "ai_connections", force: :cascade do |t|
     t.string "name"
     t.string "provider"
     t.string "api_key"
-    t.string "model"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: false, null: false
+    t.bigint "model_id"
   end
 
   create_table "ai_models", force: :cascade do |t|
-    t.integer "ai_connection_id", null: false
     t.string "external_id", null: false
     t.string "name", null: false
     t.string "provider", null: false
@@ -39,10 +38,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_20_110406) do
     t.datetime "updated_at", null: false
     t.boolean "active", default: true, null: false
     t.index ["active"], name: "index_ai_models_on_active"
-    t.index ["ai_connection_id", "external_id"], name: "index_ai_models_on_ai_connection_id_and_external_id", unique: true
-    t.index ["ai_connection_id"], name: "index_ai_models_on_ai_connection_id"
+    t.index ["external_id"], name: "index_ai_models_on_external_id", unique: true
     t.index ["provider"], name: "index_ai_models_on_provider"
   end
 
-  add_foreign_key "ai_models", "ai_connections"
+  add_foreign_key "ai_connections", "ai_models", column: "model_id"
 end

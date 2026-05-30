@@ -9,7 +9,7 @@
 
   - if current_connection
     .me-3
-      = "Current connection: #{current_connection.name}/#{current_connection.model}"
+      = "Current connection: #{current_connection.name}/#{current_connection.ai_model.external_id}"
   - else
     .me-3
       = "NO Current connection"

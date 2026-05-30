@@ -12,8 +12,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   teardown do
     # Take screenshot only on failure
     if failed?
-      p 'creating screenshot on failed test........'
-      screenshot_name = "failure_#{Time.current.strftime('%Y%m%d_%H%M%S')}_#{test_name}.png"
+      next # using internal screenshots now
+      p "--- creating screenshot on failed test for #{self.name}........"
+      screenshot_name = "failure_#{Time.current.strftime('%Y%m%d_%H%M%S')}_#{self.name}.png"
       page.save_screenshot("tmp/screenshots/#{screenshot_name}")
       puts "\n Screenshot saved: tmp/screenshots/#{screenshot_name}"
     end

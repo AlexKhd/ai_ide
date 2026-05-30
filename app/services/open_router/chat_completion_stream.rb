@@ -19,7 +19,7 @@ module OpenRouter
       req["Content-Type"] = "application/json"
 
       req.body = {
-        model: connection.model,
+        model: connection.ai_model.external_id,
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: @prompt }

@@ -17,10 +17,12 @@ class AiConnectionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create ai_connection" do
     assert_difference("AiConnection.count") do
-      post ai_connections_url, params: { ai_connection: { api_key: @ai_connection.api_key, model: @ai_connection.model, name: @ai_connection.name, provider: @ai_connection.provider } }
+      post ai_connections_url, params: { ai_connection:
+         { api_key: 'api_key', name: 'a new name', provider: 'OpenAI' }
+      }
     end
 
-    assert_redirected_to ai_connection_url(AiConnection.last)
+    assert_redirected_to ai_connections_url
   end
 
   test "should show ai_connection" do
@@ -34,8 +36,10 @@ class AiConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update ai_connection" do
-    patch ai_connection_url(@ai_connection), params: { ai_connection: { api_key: @ai_connection.api_key, model: @ai_connection.model, name: @ai_connection.name, provider: @ai_connection.provider } }
-    assert_redirected_to ai_connection_url(@ai_connection)
+    patch ai_connection_url(@ai_connection), params: { ai_connection:
+       { api_key: 'api_key', model_id: @ai_connection.model_id, name: 'other name', provider: 'Anthropic'
+        }, model: {external_id: 1}}
+    assert_redirected_to ai_connections_url
   end
 
   test "should destroy ai_connection" do

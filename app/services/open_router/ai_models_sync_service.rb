@@ -43,8 +43,6 @@ module OpenRouter
 
     def build_attributes(remote)
       {
-        ai_connection_id: AiConnection.active.id, # find_connection_id(remote),
-
         external_id: remote["id"],
         name: remote["name"],
         provider: provider(remote),

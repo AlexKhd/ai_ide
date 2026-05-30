@@ -4,8 +4,9 @@ class HomeTest < ApplicationSystemTestCase
   test "visiting the index" do
     visit '/home/index'
     assert_selector "#navbar", text: "AI IDE"
+    assert_selector "#ai-output", text: "The answer is here.."
 
     click_on "Ask AI"
-    assert_selector "#ai-output", text: "You typed"
+    assert_selector "#ai-output", text: "Thinking.."
   end
 end

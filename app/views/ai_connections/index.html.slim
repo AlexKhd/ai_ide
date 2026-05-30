@@ -20,14 +20,14 @@
         .flex.items-start.justify-between
           div
             h2.text-2xl.font-semibold.text-white
-              = "#{ai_connection.name} | Models count: #{ai_connection.ai_models.zero_cost.count}"
+              = ai_connection.name
 
             .mt-3.flex.flex-wrap.gap-2
               span.inline-flex.items-center.rounded-full.bg-blue-500.text-blue-300.px-3.py-1.text-xs.font-medium.border.border-blue-500
                 = ai_connection.provider
 
               span.inline-flex.items-center.rounded-full.bg-purple-500.text-purple-300.px-3.py-1.text-xs.font-medium.border.border-purple-500
-                = ai_connection.model
+                = ai_connection.ai_model&.external_id
 
           - if ai_connection.active?
             .h-3.w-3.rounded-full.bg-emerald-400.animate-pulse
