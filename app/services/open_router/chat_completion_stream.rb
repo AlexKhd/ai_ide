@@ -34,7 +34,11 @@ module OpenRouter
             chunk.each_line do |line|
               next if line.strip.empty? || line.start_with?(":") # skip heartbeat
               if line.start_with?("data: ")
-                data = JSON.parse(line[6..])
+                data_str = line[6..].strip
+                # Skip the [DONE] message that signals end of stream
+                next if data_str == "[DONE]"
+
+                data = JSON.parse(data_str)
                 content = data.dig("choices", 0, "delta", "content")
                 yield(content) if content
               end

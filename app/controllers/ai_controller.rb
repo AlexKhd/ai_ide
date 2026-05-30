@@ -37,6 +37,8 @@ class AiController < ApplicationController
       response.stream.write "data: #{chunk.to_json}\n\n"
       sleep 0.1 # Simulate LLM delay
     end
+    done_message = "[DONE]".to_json
+    response.stream.write "data: #{done_message}\n\n"
     response.stream.close
   end
 

@@ -15,7 +15,10 @@
       = "NO Current connection"
 
   .me-3
-    = "LLMs list last update: #{AiModel.last.updated_at.in_time_zone.strftime("%H:%M")}"
+    - if AiModel.last
+      = "LLMs list last update: #{AiModel.last.updated_at.in_time_zone.strftime("%H:%M")}"
+    - else
+      = "LLMs list last update: Never"
 
   .ml-auto.text-gray-400.text-sm
     = "v. #{Rails.application.credentials.app_version}"

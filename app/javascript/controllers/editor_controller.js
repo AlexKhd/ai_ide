@@ -29,7 +29,6 @@ export default class extends Controller {
   }
 
   askAiSse(event) {
-    //const chunk = JSON.parse("Your Ruby code is almost correct! ")?.content || ""
     const button = event.currentTarget
     const code = this.editor.getValue()
     const aiConnectionId = 3
@@ -39,14 +38,18 @@ export default class extends Controller {
     this.evtSource = new EventSource(url)  // Class property
     this.buffer = ""
     this.i = 0
+    this.isTyping = false
 
+    this.setLoading(button, true)
     this.evtSource.onmessage = (event) => this.handleChunk(event)
     this.evtSource.onerror = (err) => this.handleError(err)
   }
 
   handleChunk(event) {
-    //const chunk = JSON.parse(event.data)?.content || ""
-    const chunk = JSON.parse(event.data) || ""
+    const data = event.data.trim()
+    if (!data) return  // Skip empty chunks
+
+    const chunk = JSON.parse(data) || ""
 
     if (chunk === "[DONE]") {
       this.finishTyping()
@@ -54,7 +57,12 @@ export default class extends Controller {
     }
 
     this.buffer += chunk
-    if (this.i === 0) this.renderTypingEffect()
+
+    // Start typing effect if not already running
+    if (!this.isTyping) {
+      this.isTyping = true
+      this.renderTypingEffect()
+    }
   }
 
   renderTypingEffect() {
@@ -65,12 +73,17 @@ export default class extends Controller {
     this.i++
     if (this.i < this.buffer.length) {
       requestAnimationFrame(() => this.renderTypingEffect())
+    } else {
+      this.isTyping = false
     }
   }
 
   finishTyping() {
     this.evtSource?.close()
-    this.setLoading(document.querySelector("#ask-ai"), false)
+    const button = document.querySelector("#ask-ai")
+    if (button) {
+      this.setLoading(button, false)
+    }
     Prism.highlightAll()
   }
 
@@ -85,7 +98,7 @@ export default class extends Controller {
   }
 
   handleError(err) {
-    this.showError(`Connection failed!${err}`)
+    this.showError(`Connection failed! ${err}`)
     this.finishTyping()
   }
 
@@ -102,9 +115,7 @@ export default class extends Controller {
     const code = this.editor.getValue()
     const button = event.currentTarget
 
-    button.disabled = true
-    button.classList.add("opacity-50", "cursor-not-allowed")
-    this.outputTarget.innerText = "Thinking..."
+    this.setLoading(button, true)
 
     fetch("/ai/code_suggest", {
       method: "POST",
@@ -117,13 +128,13 @@ export default class extends Controller {
     .then(res => res.json())
     .then(data => {
       this.outputTarget.innerHTML = marked.parse(data.suggestion)
+      Prism.highlightAll()
     })
     .catch(error => {
-      this.outputTarget.innerHTML = `Error: ${error.message}`
+      this.showError(`Error: ${error.message}`)
     })
     .finally(() => {
-      button.disabled = false
-      button.classList.remove("opacity-50", "cursor-not-allowed")
+      this.setLoading(button, false)
     })
   }
 
