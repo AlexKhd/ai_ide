@@ -1,12 +1,8 @@
-div class="min-h-screen bg-slate-50 py-10"
+.min-h-screen.bg-slate-50.py-10
   .mx-auto.max-w-6xl.px-4
-
     .flex.items-center.justify-between.mb-8
       h1.text-3xl.font-bold.text-slate-900 Users
-
-      = link_to "New User",
-        new_user_path,
-        class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+      = link_to "New User", new_user_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
 
     .overflow-hidden.rounded-2xl.bg-white.shadow.ring-1.ring-slate-200
       table.min-w-full.divide-y.divide-slate-200

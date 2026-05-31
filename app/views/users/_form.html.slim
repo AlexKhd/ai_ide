@@ -1,0 +1,37 @@
+= form_with model: @user, class: "space-y-6" do |form|
+
+  .space-y-2
+    = form.label :email_address, class: "block text-sm font-medium text-slate-700"
+    = form.email_field :email_address,
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .space-y-2
+    = form.label :role, class: "block text-sm font-medium text-slate-700"
+    = form.select :role,
+      User.roles.keys.map { |role| [role.titleize, role] },
+      {},
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .border-t.border-slate-200.pt-6
+    p.mb-4.text-sm.font-medium.text-slate-700 Change Password (optional)
+
+    .space-y-4
+      .space-y-2
+        = form.label :password, class: "block text-sm font-medium text-slate-700"
+        = form.password_field :password,
+          autocomplete: "new-password",
+          class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+      .space-y-2
+        = form.label :password_confirmation, class: "block text-sm font-medium text-slate-700"
+        = form.password_field :password_confirmation,
+          autocomplete: "new-password",
+          class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .flex.justify-end.gap-3.pt-4
+    = link_to "Cancel",
+      users_path,
+      class: "rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+
+    = form.submit "Update User",
+      class: "rounded-xl bg-purple-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-purple-500"

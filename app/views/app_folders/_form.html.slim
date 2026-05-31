@@ -1,0 +1,30 @@
+= form_with model: @app_folder, class: "space-y-6" do |form|
+
+  .space-y-2
+    = form.label :name, class: "block text-sm font-medium text-slate-700"
+    = form.text_field :name,
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .space-y-2
+    = form.label :path, class: "block text-sm font-medium text-slate-700"
+    = form.text_field :path,
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .space-y-2
+    = form.label :language, class: "block text-sm font-medium text-slate-700"
+    = form.text_field :language,
+      value: "ruby",
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .space-y-2
+    = form.label :description, class: "block text-sm font-medium text-slate-700"
+    = form.text_field :description,
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .flex.justify-end.gap-3.pt-4
+    = link_to "Cancel",
+      app_folders_path,
+      class: "rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+
+    = form.submit "Update folder",
+      class: "rounded-xl bg-purple-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-purple-500"

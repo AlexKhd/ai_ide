@@ -1,0 +1,8 @@
+.min-h-screen.bg-slate-50.p-10
+  h1.text-3xl.font-bold = "Edit folder #{@app_folder.name}"
+
+  == render "form", app_folder: @app_folder
+
+  .ms-3
+    = link_to "Back to folders", app_folders_path,
+     class: "rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-green-500"

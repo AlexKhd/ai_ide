@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_31_031941) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_31_080749) do
   create_table "ai_connections", force: :cascade do |t|
     t.string "name"
     t.string "provider"
@@ -42,6 +42,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_031941) do
     t.index ["provider"], name: "index_ai_models_on_provider"
   end
 
+  create_table "app_folders", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "name", null: false
+    t.string "path", null: false
+    t.text "description"
+    t.string "language"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "path"], name: "index_app_folders_on_user_id_and_path", unique: true
+    t.index ["user_id"], name: "index_app_folders_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -63,5 +76,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_31_031941) do
   end
 
   add_foreign_key "ai_connections", "ai_models", column: "model_id"
+  add_foreign_key "app_folders", "users"
   add_foreign_key "sessions", "users"
 end

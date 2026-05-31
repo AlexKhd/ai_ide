@@ -7,6 +7,14 @@
     = link_to 'Connections', ai_connections_path,
       class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
 
+  .me-3
+    = link_to 'Users', users_path,
+      class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
+
+  .me-3
+    = link_to 'Projects', app_folders_path,
+      class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
+
   - if current_connection
     .me-3
       = "Current connection: #{current_connection.name}/#{current_connection.ai_model.external_id}"
@@ -20,5 +28,6 @@
     - else
       = "LLMs list last update: Never"
 
-  .ml-auto.text-gray-400.text-sm
+  .flex.ml-auto.text-gray-400.text-sm
+    .me-2 = current_user.nickname || current_user.email_address
     = "v. #{Rails.application.credentials.app_version}"

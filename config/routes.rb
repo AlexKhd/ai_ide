@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   root "home#dashboard"
   resources :ai_connections
+  resources :app_folders
   get "ai/code_suggest"
   post "/ai/code_suggest", to: "ai#code_suggest"
   get "ai/code_suggestsse"

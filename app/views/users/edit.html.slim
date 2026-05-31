@@ -1,0 +1,23 @@
+.min-h-screen.bg-slate-50.py-10
+  .mx-auto.max-w-2xl.px-4
+
+    .mb-8.flex.items-center.justify-between
+      h1.text-3xl.font-bold.text-slate-900 Edit User
+
+  = link_to "Back",
+    users_path,
+    class: "rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+
+  .rounded-2xl.bg-white.p-8.shadow.ring-1.ring-slate-200
+
+    - if @user.errors.any?
+      .mb-6.rounded-xl.border.border-red-200.bg-red-50.p-4
+        h2.mb-2.text-sm.font-semibold.text-red-800
+          = pluralize(@user.errors.count, "error")
+          |  prevented this user from being saved
+
+        ul.list-disc.pl-5.text-sm.text-red-700
+          - @user.errors.full_messages.each do |message|
+            li = message
+
+    == render "form", user: @user
