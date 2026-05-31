@@ -1,0 +1,16 @@
+.main.min-h-screen.flex.items-center.justify-center.bg-slate-50.px-4
+  .w-full.max-w-md
+    = tag.div(flash[:alert], style: "color:red") if flash[:alert]
+    .rounded-2xl.bg-white.p-8.shadow-xl.ring-1.ring-slate-200
+      h1.mb-6.text-center.text-3xl.font-bold.text-slate-900
+        | Forgot your password?
+
+      = form_with url: passwords_path, class: "space-y-5" do |form|
+        .space-y-2
+          = form.email_field :email_address, required: true, autofocus: true,
+           autocomplete: "username", placeholder: "Enter your email address",
+            value: params[:email_address],
+             class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+          = form.submit "Email reset instructions",
+           class: "w-full rounded-xl bg-purple-600 px-4 py-3 font-semibold text-white transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300"

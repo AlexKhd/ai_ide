@@ -3,6 +3,12 @@ require "test_helper"
 class AiConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @ai_connection = ai_connections(:one)
+    @user = users(:one)
+
+    post session_url, params: {
+      email_address: @user.email_address,
+      password: "password"
+    }
   end
 
   test "should get index" do
@@ -38,7 +44,7 @@ class AiConnectionsControllerTest < ActionDispatch::IntegrationTest
   test "should update ai_connection" do
     patch ai_connection_url(@ai_connection), params: { ai_connection:
        { api_key: 'api_key', model_id: @ai_connection.model_id, name: 'other name', provider: 'Anthropic'
-        }, model: {external_id: 1}}
+        }, model: { external_id: 1 } }
     assert_redirected_to ai_connections_url
   end
 

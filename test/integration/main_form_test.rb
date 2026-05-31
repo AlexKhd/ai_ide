@@ -1,7 +1,6 @@
 require "test_helper"
 
 class MainFormTest < ActionDispatch::IntegrationTest
-
   test "Main page elements" do
     skip 'skipped'
     get "/home/index"
@@ -15,7 +14,7 @@ class MainFormTest < ActionDispatch::IntegrationTest
     assert_dom "#navbar p", "AI IDE"
 
     post "/ai/code_suggest",
-      params: {"code" => "'Hi AI IDE!'", "ai" => {"code" => "// Write your Ruby code here\nputs 'Hello AI IDE!'"}
+      params: { "code" => "'Hi AI IDE!'", "ai" => { "code" => "// Write your Ruby code here\nputs 'Hello AI IDE!'" }
     }
 
     assert_response :success

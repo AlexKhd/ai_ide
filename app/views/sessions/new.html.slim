@@ -1,0 +1,41 @@
+.main.min-h-screen.flex.items-center.justify-center.bg-slate-50.px-4
+  .w-full.max-w-md
+    - if flash[:alert]
+      .mb-4.rounded-lg.border.border-red-200.bg-red-50.p-4.text-sm.text-red-700
+        = flash[:alert]
+
+    - if flash[:notice]
+      .mb-4.rounded-lg.border.border-green-200.bg-green-50.p-4.text-sm.text-green-700
+        = flash[:notice]
+
+    .rounded-2xl.bg-white.p-8.shadow-xl.ring-1.ring-slate-200
+      h1.mb-6.text-center.text-3xl.font-bold.text-slate-900
+        | Sign In
+
+      = form_with url: session_path, class: "space-y-5" do |form|
+        .space-y-2
+          = form.label :email_address, "Email Address", class: "block text-sm font-medium text-slate-700"
+          = form.email_field :email_address,
+            required: true,
+            autofocus: true,
+            autocomplete: "username",
+            value: params[:email_address],
+            placeholder: "you@example.com",
+            class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+        .space-y-2
+          = form.label :password, class: "block text-sm font-medium text-slate-700"
+          = form.password_field :password,
+            required: true,
+            autocomplete: "current-password",
+            maxlength: 72,
+            placeholder: "••••••••",
+            class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+        = form.submit "Sign In",
+          class: "w-full rounded-xl bg-purple-600 px-4 py-3 font-semibold text-white transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300"
+
+      .mt-6.text-center
+        = link_to "Forgot password?",
+          new_password_path,
+          class: "text-sm font-medium text-purple-600 hover:text-purple-500"

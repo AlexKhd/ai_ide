@@ -3,9 +3,9 @@ class AiController < ApplicationController
 
   def code_suggestsse
     connection = current_connection
-    #respond_to do |format|
+    # respond_to do |format|
     #  format.html { redirect_to root_path } # Fallback
-    #end
+    # end
 
     # SSE Streaming
     response.headers["Content-Type"] = "text/event-stream"
@@ -13,7 +13,7 @@ class AiController < ApplicationController
     response.headers["Access-Control-Allow-Origin"] = "*"
 
     # Simulate streaming chunks (replace with real LLM)
-    #chunks = [
+    # chunks = [
     #  "Your Ruby code is almost correct! ",
     #  "Here's the improved version:\n\n",
     #  "```ruby\n# Write your Ruby code here\nputs 'Hello AI IDE!'\n```\n\n",
@@ -22,18 +22,15 @@ class AiController < ApplicationController
     #  "| Comment syntax | // Write your Ruby code here | # Write your Ruby code here |\n\n",
     #  "Why: Ruby uses the # symbol for single-line comments, not // (which is C++)\n",
     #  "[DONE]"
-    #]
+    # ]
 
     open_router_service = OpenRouter::ChatCompletionStream.new(
       connection: connection,
-      #prompt: prompt
       prompt: params[:code]
     )
 
     render plain: "" # Start stream
     open_router_service.each_chunk do |chunk|
-    #chunks.each do |chunk|
-      #response.stream.write "data: #{chunk}\n\n"
       response.stream.write "data: #{chunk.to_json}\n\n"
       sleep 0.1 # Simulate LLM delay
     end

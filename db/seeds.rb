@@ -7,3 +7,12 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+if User.count.zero?
+  User.create!(
+    email_address: Rails.application.credentials.dig(:admin, :email),
+    nickname: :admin,
+    password: Rails.application.credentials.dig(:admin, :password),
+    password_confirmation: Rails.application.credentials.dig(:admin, :password),
+    role: :admin
+  )
+end
