@@ -17,17 +17,20 @@
 
   - if current_connection
     .me-3
-      = "Current connection: #{current_connection.name}/#{current_connection.ai_model.external_id}"
+      = "Connection: #{current_connection.name}/#{current_connection.ai_model.external_id}"
   - else
     .me-3
       = "NO Current connection"
 
   .me-3
     - if AiModel.last
-      = "LLMs list last update: #{AiModel.last.updated_at.in_time_zone.strftime("%H:%M")}"
+      = "LLMs last update: #{AiModel.last.updated_at.in_time_zone.strftime("%H:%M")}"
     - else
       = "LLMs list last update: Never"
 
-  .flex.ml-auto.text-gray-400.text-sm
-    .me-2 = current_user.nickname || current_user.email_address
+  .flex.ml-auto.text-gray-400.text-sm.items-center
     = "v. #{Rails.application.credentials.app_version}"
+    - if current_user
+      .ms-2.me-2 = current_user.nickname || current_user.email_address
+      = link_to "Logout", session_path, data: { turbo_method: :delete },
+       class: "rounded-xl border border-red-700 bg-red-900 px-2 py-1 text-sm font-medium text-red-200 hover:bg-red-800"

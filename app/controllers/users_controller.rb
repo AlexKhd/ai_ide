@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.expect(user: [ :email_address, :nickname, :password, { role_ids: [] } ])
+      params.expect(user: [ :email_address, :nickname, :password, :working_directory, { role_ids: [] } ])
     end
 
     def require_admin!

@@ -7,5 +7,8 @@ import { application } from "./application"
 import EditorController from "./editor_controller"
 application.register("editor", EditorController)
 
+import FolderPickerController from "./folder_picker_controller"
+application.register("folder_picker", FolderPickerController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)

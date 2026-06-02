@@ -6,6 +6,11 @@
       class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
 
   .space-y-2
+    = form.label :working_directory, class: "block text-sm font-medium text-slate-700"
+    = form.text_field :working_directory,
+      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+  .space-y-2
     = form.label :role, class: "block text-sm font-medium text-slate-700"
     = form.select :role,
       User.roles.keys.map { |role| [role.titleize, role] },

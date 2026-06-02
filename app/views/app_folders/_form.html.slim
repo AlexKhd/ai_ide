@@ -1,19 +1,61 @@
-= form_with model: @app_folder, class: "space-y-6" do |form|
+= form_with model: @app_folder, class: "space-y-6", local: true do |form|
 
   .space-y-2
     = form.label :name, class: "block text-sm font-medium text-slate-700"
     = form.text_field :name,
       class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
 
-  .space-y-2
+  .space-y-2[data-controller="folder_picker"]
     = form.label :path, class: "block text-sm font-medium text-slate-700"
-    = form.text_field :path,
-      class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+
+    .mb-2.rounded.bg-blue-50.p-3.text-sm.text-blue-700
+      | Working directory:
+      span.font-mono= current_user.working_directory
+
+    .flex.gap-2
+      = form.text_field :path, id: "app_folder_path",
+        class: "flex-1 rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200",
+        readonly: true,
+        placeholder: "Click Browse to select a folder"
+
+      button.folder_picker_btn.rounded-xl.bg-slate-600.px-4.py-3.text-white.hover:bg-slate-700(
+        type="button"
+        data-action="click->folder_picker#openBrowseDialog"
+      )
+        | 📁 Browse
+
+    #folders-browser.hidden.space-y-3.rounded-xl.border.border-slate-300.bg-slate-50.p-4(
+      data-folder_picker-target="browser"
+    )
+      .flex.items-center.justify-between
+        span.text-sm.font-medium Available folders
+        button.rounded.bg-slate-400.px-3.py-1.text-sm(
+          type="button"
+          data-action="click->folder_picker#closeBrowser"
+        )
+          | ✕
+
+      #folders-list.max-h-64.space-y-1.overflow-y-auto
+        | Loading...
+
+      .flex.justify-between.gap-2.border-t.border-slate-300.pt-3
+        button.rounded.bg-slate-300.px-4.py-2.text-sm(
+          type="button"
+          data-action="click->folder_picker#closeBrowser"
+        )
+          | Cancel
+        button.rounded.bg-green-600.px-4.py-2.text-sm.text-white(
+          type="button"
+          data-action="click->folder_picker#selectFolder"
+        )
+          | Select
 
   .space-y-2
     = form.label :language, class: "block text-sm font-medium text-slate-700"
-    = form.text_field :language,
-      value: "ruby",
+    = form.select :language,
+      [["Ruby", "ruby"], ["Python", "python"], ["JavaScript", "javascript"], ["TypeScript", "typescript"], ["Java", "java"], ["Go", "go"], ["Rust", "rust"]],
+      { selected: "ruby" },
+      id: "app_folder_language",
       class: "w-full rounded-xl border border-slate-300 px-4 py-3 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
 
   .space-y-2
@@ -26,5 +68,5 @@
       app_folders_path,
       class: "rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
 
-    = form.submit "Update folder",
+    = form.submit "Save",
       class: "rounded-xl bg-purple-600 px-5 py-3 text-sm font-semibold text-white shadow hover:bg-purple-500"

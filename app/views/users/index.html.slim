@@ -9,6 +9,7 @@
         thead.bg-slate-50
           tr
             th.px-6.py-3.text-left.text-xs.font-semibold.text-slate-600.uppercase tracking-wider Email
+            th.px-6.py-3.text-left.text-xs.font-semibold.text-slate-600.uppercase Working folder
             th.px-6.py-3.text-left.text-xs.font-semibold.text-slate-600.uppercase Role
             th.px-6.py-3.text-left.text-xs.font-semibold.text-slate-600.uppercase Created
             th.px-6.py-3.text-right.text-xs.font-semibold.text-slate-600.uppercase Actions
@@ -18,7 +19,8 @@
             tr.hover:bg-slate-50
               td.px-6.py-4.text-sm.font-medium.text-slate-900
                 = user.email_address
-
+              td.px-6.py-4.text-sm
+                = user.working_directory
               td.px-6.py-4.text-sm
                 - if user.admin?
                   span.inline-flex.rounded-full.bg-purple-100.px-2.py-1.text-xs.font-semibold.text-purple-700 Admin
