@@ -2,12 +2,13 @@ require "test_helper"
 
 class AiConnectionsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @ai_connection = ai_connections(:one)
-    @user = users(:one)
+    @admin = create(:user, :admin)
+    @ai_model = create(:ai_model)
+    @ai_connection = create(:ai_connection)
 
     post session_url, params: {
-      email_address: @user.email_address,
-      password: "password"
+      email_address: @admin.email_address,
+      password: @admin.password
     }
   end
 

@@ -2,11 +2,11 @@ require "test_helper"
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @user = users(:one)
+    @admin = create(:user, :admin)
 
     post session_url, params: {
-      email_address: @user.email_address,
-      password: "password"
+      email_address: @admin.email_address,
+      password: @admin.password
     }
   end
 

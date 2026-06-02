@@ -1,5 +1,6 @@
 require "test_helper"
 require "capybara/cuprite"
+require "database_cleaner/active_record"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   # driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
@@ -7,9 +8,12 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   setup do
     Capybara.current_driver = :cuprite
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
   end
 
   teardown do
+    DatabaseCleaner.clean
     # Take screenshot only on failure
     if failed?
       next # using internal screenshots now

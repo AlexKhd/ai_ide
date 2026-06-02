@@ -2,8 +2,14 @@ require "application_system_test_case"
 
 class AiConnectionsTest < ApplicationSystemTestCase
   setup do
-    @ai_connection = ai_connections(:one)
-    @ai_model = ai_models(:one)
+    admin = create(:user, :admin)
+    visit new_session_path
+    fill_in "email_address", with: admin.email_address
+    fill_in "password", with: admin.password
+    click_button "Sign In"
+
+    @ai_model = create(:ai_model)
+    @ai_connection = create(:ai_connection)
   end
 
   test "visiting the index" do
@@ -15,14 +21,13 @@ class AiConnectionsTest < ApplicationSystemTestCase
     visit ai_connections_url
     click_on "New AI Connection"
 
-    fill_in "Api key", with: @ai_connection.api_key
-    select @ai_connection.ai_model.external_id, from: "model_id"
     fill_in "Name", with: "A new connection"
     select 'Anthropic', from: "Provider"
+    fill_in "Api key", with:"api_key_sample"
+    select @ai_model.external_id, from: "model_id"
     click_on "Create Ai connection"
 
     assert_text "Ai connection was successfully created"
-    click_on "Home"
   end
 
   test "should update Ai connection" do
