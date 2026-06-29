@@ -23,7 +23,7 @@ class AiConnectionsTest < ApplicationSystemTestCase
 
     fill_in "Name", with: "A new connection"
     select 'Anthropic', from: "Provider"
-    fill_in "Api key", with:"api_key_sample"
+    fill_in "Api key", with: "api_key_sample"
     select @ai_model.external_id, from: "model_id"
     click_on "Create Ai connection"
 

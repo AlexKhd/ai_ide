@@ -6,4 +6,8 @@ class AiModel < ApplicationRecord
   has_many :ai_connections, foreign_key: :model_id, dependent: :nullify
 
   validates :external_id, presence: true, uniqueness: true
+
+  def is_free?
+    prompt_price == 0 && completion_price == 0
+  end
 end

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       post :apply_sync
     end
   end
+  resources :ai_models, only: :index
   resources :users do
     member do
       get :edit

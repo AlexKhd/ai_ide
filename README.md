@@ -1,8 +1,14 @@
 # README
 
-Things you may want to cover:
+Purpose of the app: AI coding agent
+
+# AI CONTEXT (for LLMs)
+
+Documentation's entry point: docs/ai-context.md
 
 * Ruby version
+
+3.4.7
 
 * System dependencies
 

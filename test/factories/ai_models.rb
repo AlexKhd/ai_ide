@@ -6,12 +6,12 @@ FactoryBot.define do
     context_length                          { 999999 }
     input_modalities                        { ["text", "image", "file"] }
     output_modalities                       { ["text"] }
-    supports_tools                          {}
-    supports_reasoning                      {}
+    supports_tools                          { }
+    supports_reasoning                      { }
     prompt_price                            { 0 }
     completion_price                        { 0 }
-    architecture                            {}
-    raw                                     {}
+    architecture                            { }
+    raw                                     { }
     active                                  { true }
   end
 end
