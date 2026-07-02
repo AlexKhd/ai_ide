@@ -5,7 +5,7 @@ import "prismjs/components/prism-ruby.js" // add other languages as needed
 import "prismjs/themes/prism-tomorrow.css" // dark theme
 
 export default class extends Controller {
-  static targets = ["container", "output", "outputerror"]
+  static targets = ["container", "output", "outputerror", "formarea", "submitButton"]
 
   connect() {
     this.initializeMonaco()
@@ -20,7 +20,7 @@ export default class extends Controller {
 
     require(["vs/editor/editor.main"], () => {
       this.editor = monaco.editor.create(this.containerTarget, {
-        value: "// Write your Ruby code here\nputs 'Hello AI IDE!'",
+        value: "// Just for display code",
         language: "ruby",
         theme: "vs-dark",
         automaticLayout: true
@@ -106,17 +106,38 @@ export default class extends Controller {
     this.outputerrorTarget.innerHTML = `<div class="text-red-500">${message}</div>`
   }
 
+  toggleButton() {
+    const queryInput = document.getElementById("queryarea")
+    const isValueEmpty = !queryInput || queryInput.value.trim() === ""
+
+    this.submitButtonTarget.classList.toggle("hidden", isValueEmpty)
+  }
+
   askAi(event) {  // ✅ Add event param
     if (!this.editor) {
       this.outputTarget.innerText = "Editor not ready yet!"
       return
     }
 
-    const code = this.editor.getValue()
+    const queryInput = this.element.querySelector("#queryarea")
+    const code = queryInput ? queryInput.value : ""
+
     const button = event.currentTarget
 
     this.setLoading(button, true)
 
+    const form = document.querySelector("[data-editor-target=formarea]");
+
+    if (!form) throw new Error('Form not found');
+
+    // Now safely create FormData
+    const formData = new FormData(form);
+    const params = Object.fromEntries(formData);
+
+    console.log('params');
+    console.log(params);
+
+    // Send AJAX request
     fetch("/ai/code_suggest", {
       method: "POST",
       headers: {
@@ -135,6 +156,8 @@ export default class extends Controller {
     })
     .finally(() => {
       this.setLoading(button, false)
+      queryInput.value = ""
+      this.submitButtonTarget.classList.add("hidden")
     })
   }
 

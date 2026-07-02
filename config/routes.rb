@@ -18,7 +18,13 @@ Rails.application.routes.draw do
       post :apply_sync
     end
   end
+  resources :ai_messages, only: :destroy
   resources :ai_models, only: :index
+  resources :mcp_tools, only: [:index] do
+    member do
+      patch :toggle
+    end
+  end
   resources :users do
     member do
       get :edit

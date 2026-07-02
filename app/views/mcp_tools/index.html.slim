@@ -1,0 +1,17 @@
+.max-w-4xl.mx-auto.p-6
+  .flex.items-center.justify-between.mb-6
+    div
+      h1.text-2xl.font-bold.text-zinc-900 MCP Agent Control Panel
+      p.text-sm.text-zinc-500 Manage active tools and execution contexts for the AI agent loop.
+    .bg-indigo-50.px-3.py-1.5.rounded.border.border-indigo-100
+      span.text-xs.font-semibold.text-indigo-700
+        | Total Tracked Tools: #{@mcp_tools.size}
+
+  .bg-white.shadow-sm.rounded-lg.border.border-zinc-200.divide-y.divide-zinc-200
+    - if @mcp_tools.any?
+      - @mcp_tools.each do |tool|
+        = render partial: "mcp_tools/mcp_tool", locals: { tool: tool }
+    - else
+      .p-8.text-center
+        p.text-sm.text-zinc-500 No MCP tools discovered in the database.
+        p.text-xs.text-zinc-400.mt-1 Run seed profiles to register local functional system schemas.

@@ -8,6 +8,7 @@ class User < ApplicationRecord
        },
        validate: true
 
+  has_many :ai_sessions, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_many :app_folders, dependent: :destroy
 

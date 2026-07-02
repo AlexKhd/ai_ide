@@ -5,14 +5,14 @@ module OpenRouter
   class ChatCompletion
     API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-    def initialize(connection:, prompt:)
+    def initialize(connection:, messages:, tools: [])
       @connection = connection
-      @prompt = prompt
+      @messages = messages
+      @tools = tools
     end
 
     def call
       uri = URI(API_URL)
-
       request = Net::HTTP::Post.new(uri)
 
       request["Authorization"] = "Bearer #{connection.api_key}"
@@ -20,58 +20,48 @@ module OpenRouter
       request["HTTP-Referer"] = "http://localhost:3000"
       request["X-Title"] = "AI IDE"
 
-      request.body = {
+      payload = {
         model: connection.ai_model.external_id,
-        messages: [
-          {
-            role: "system",
-            content: system_prompt
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
-      }.to_json
+        messages: messages
+      }
 
-      response = Net::HTTP.start(
-        uri.hostname,
-        uri.port,
-        use_ssl: true
-      ) do |http|
+      # Only inject if your database row says this specific model supports reasoning!
+      if connection.ai_model.supports_reasoning?
+        payload[:reasoning] = {}
+      end
+
+      # Only supply tools if the model configuration supports them
+      payload[:tools] = tools if tools.any?
+
+      request.body = payload.to_json
+
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
         http.request(request)
       end
 
       Rails.logger.info "OPENROUTER STATUS: #{response.code}"
-      Rails.logger.info "OPENROUTER BODY: #{response.body}"
 
       json = JSON.parse(response.body)
-
       if json["error"]
-        raise StandardError, json["error"]["message"]
+        # Log the exact sub-error message (e.g., "invalid field 'tools'") to your console log terminal
+        Rails.logger.error "OPENROUTER ERROR DETAILS: #{json['error']}"
+        raise StandardError, "Provider returned error: #{json.dig('error', 'message')}"
       end
 
-      content = json.dig("choices", 0, "message", "content")
+      choice_message = json.dig("choices", 0, "message")
+      raise StandardError, "No completion returned" if choice_message.blank?
 
-      if content.blank?
-        raise StandardError, "No completion returned"
-      end
+      # Deep transform keys to symbols so .dig(:tool_calls) works perfectly!
+      symbolized_message = choice_message.deep_symbolize_keys
 
-      content
+      {
+        content: symbolized_message[:content],
+        tool_calls: symbolized_message[:tool_calls]
+      }
     end
 
     private
 
-    attr_reader :connection, :prompt
-
-    def system_prompt
-      <<~PROMPT
-        You are an expert Ruby on Rails coding assistant.
-
-        Help the user understand, improve, and debug code.
-
-        Be concise and practical.
-      PROMPT
-    end
+    attr_reader :connection, :messages, :tools
   end
 end

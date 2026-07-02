@@ -40,25 +40,24 @@ class AiController < ApplicationController
   end
 
   def code_suggest
+    if params[:code] == 'test'
+      render json: { suggestion: "User sent test message, nothing to be done. Skipping..." } and return
+    end
+
     connection = current_connection
-
     unless connection
-      render json: {
-        suggestion: "No active AI connection configured."
-      }, status: :unprocessable_entity
-
+      render json: { suggestion: "No active AI connection configured." }, status: :unprocessable_entity
       return
     end
 
-    suggestion = OpenRouter::ChatCompletion.new(
-      connection: connection,
-      prompt: params[:code]
-    ).call
+    ai_session = current_user.ai_sessions.find_by(active: true) || current_user.ai_sessions.create!(ai_model: connection.ai_model, ai_connection: connection)
 
-    render json: { suggestion: suggestion }
+    runner = Mcp::AgentRunner.new(ai_session)
+    final_suggestion = runner.process_user_message!(params[:code].to_s)
+
+    render json: { suggestion: final_suggestion }
   rescue => e
-    render json: {
-      suggestion: "Error: #{e.message}"
-    }, status: :internal_server_error
+    Rails.logger.error("Agent Loop Failed: #{e.message}\n#{e.backtrace.join("\n")}")
+    render json: { suggestion: "Error: #{e.message}" }, status: :internal_server_error
   end
 end

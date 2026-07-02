@@ -16,3 +16,36 @@ if User.count.zero?
     role: :admin
   )
 end
+
+puts "Seeding MCP Tools..."
+
+tools_to_seed = [
+  {
+    name: "file_read",
+    description: "Reads the complete contents of a specific file inside the project directory.",
+    schema: Mcp::Tools::FileReadTool.definition
+  },
+  {
+    name: "file_write", # 👈 Add this block to your array
+    description: "Creates a new file or completely overwrites an existing file with fresh content inside the project directory.",
+    schema: Mcp::Tools::FileWriteTool.definition
+  },
+  {
+    name: "ai_search",
+    description: "Searches the project codebase for specific queries or patterns.",
+    schema: Mcp::Tools::SearchTool.definition
+  }
+  # Future tools
+]
+
+tools_to_seed.each do |tool_data|
+  tool = McpTool.find_or_initialize_by(name: tool_data[:name])
+  tool.update!(
+    description: tool_data[:description],
+    schema: tool_data[:schema],
+    enabled: true # Turn them on by default
+  )
+  puts "Registered/Updated tool: #{tool.name}"
+end
+
+puts "MCP Tools seeding completed successfully!"

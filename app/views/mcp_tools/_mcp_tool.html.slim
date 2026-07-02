@@ -1,0 +1,18 @@
+.flex.items-center.justify-between.p-4.transition.duration-150.ease-in-out class="#{tool.enabled ? 'bg-white' : 'bg-zinc-50'}" id="mcp_tool_#{tool.id}"
+  .flex-1.pr-4
+    .flex.items-center.space-x-3
+      span.font-mono.text-sm.font-bold class="#{tool.enabled ? 'text-indigo-600' : 'text-zinc-400 line-through'}"
+        = tool.name
+      - if tool.enabled
+        span.inline-flex.items-center.px-2.py-0.5.rounded-full.text-xs.font-medium.bg-green-100.text-green-800
+          | Active
+      - else
+        span.inline-flex.items-center.px-2.py-0.5.rounded-full.text-xs.font-medium.bg-zinc-200.text-zinc-600
+          | Disabled
+
+    p.text-sm.mt-1 class="#{tool.enabled ? 'text-zinc-600' : 'text-zinc-400'}"
+      = tool.description || "No specific system operational boundaries provided."
+
+  .flex.items-center.space-x-2
+    = button_to toggle_mcp_tool_path(tool), method: :patch, data: { turbo_frame: "_top" }, class: "px-3 py-1.5 text-xs rounded border transition font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 #{tool.enabled ? 'border-red-200 text-red-600 hover:bg-red-50 focus:ring-red-500' : 'border-zinc-300 text-zinc-700 hover:bg-zinc-50 focus:ring-indigo-500'}"
+      = tool.enabled ? "Deactivate" : "Activate"

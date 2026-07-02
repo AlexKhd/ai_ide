@@ -3,7 +3,32 @@ div data-controller="editor"
     | Ask AI
   button#ask-ai.btn-ai.bg-green-700.mt-1.ms-3 data-action="click->editor#askAiSse"
     | Ask AI SSE
-  #editor data-editor-target="container" style="width:100%; height:500px; border:1px solid #ccc;"
+  .flex.gap-4.p-2
+    .w-1/2.bg-zinc-100.p-2
+      #editor data-editor-target="container" style="width:100%; height:500px; border:1px solid #ccc;"
+    .w-1/2.bg-zinc-200.p-2.flex.flex-col.justify-between [1]
+      #ai-output.text-shadow-neon data-editor-target="output" The answer is here..
+      .flex-1.overflow-y-auto.space-y-2.my-2 class="max-h-[480px]"
+        - @ai_messages.each do |message|
+          .flex.justify-between.items-center.p-2.bg-white.rounded.shadow-sm.group
+            p class="w-full text-gray-800 #{message.role == 'user' ? 'text-right text-sm' : ''}"
+              = "#{message.content} / #{message.role} #{message.updated_at.in_time_zone.strftime('%H:%M')}"
+            = button_to ai_message_path(message), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-500 transition duration-150" do
+              = ai_delete_button_svg
+      .mt-auto
+        = form_with url: nil, method: :get, data: { editor_target: "formarea" } do |form|
+          div
+            = text_area_tag :query, params[:query],
+              placeholder: "Ask anything...",
+              rows: 3,
+              id: "queryarea",
+              data: { action: "input->editor#toggleButton" },
+              class: "block w-full rounded-md border-zinc-500 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition duration-150 ease-in-out text-gray-800"
 
-  #ai-output.text-shadow-neon data-editor-target="output" The answer is here..
-  #ai-output-error.text-shadow-neon data-editor-target="outputerror" = '/errors if any/'
+        .mt-2 = button_tag "Send", type: "button", data: { turbo_method: :post, action: "click->editor#askAi", editor_target: "submitButton" },
+         class: "bg-purple-700 hidden text-white px-4 py-2 rounded-md transition duration-150 ease-in-out"
+
+  #ai-output-error.text-shadow-neon.p-2 data-editor-target="outputerror" = '/errors if any/'
+
+.p-2
+  = "AiSession ID:#{current_ai_session.id}"
