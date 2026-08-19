@@ -75,6 +75,20 @@ module Mcp
       tool_calls.each do |call_data|
         # Ensure we can read string keys coming back from OpenRouter JSON responses
         tool_name = call_data.dig(:function, :name) || call_data.dig("function", "name")
+
+        if tool_name == "file_write"
+          # Create the tracking record as "pending"
+          ::AiToolCall.create!(
+            ai_message: assistant_msg,
+            mcp_tool: mcp_tool,
+            status: "pending_approval", # 👈 Locks execution down!
+            input: parsed_args
+          )
+
+          # Stop the agent loop right here! Return a special instruction to the user UI
+          return "PAUSED_FOR_APPROVAL"
+        end
+
         tool_call_id = call_data[:id] || call_data["id"]
         raw_args = call_data.dig(:function, :arguments) || call_data.dig("function", "arguments")
         parsed_args = raw_args.is_a?(String) ? JSON.parse(raw_args) : raw_args

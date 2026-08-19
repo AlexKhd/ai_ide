@@ -11,7 +11,7 @@ div data-controller="editor"
       .flex-1.overflow-y-auto.space-y-2.my-2 class="max-h-[480px]"
         - @ai_messages.each do |message|
           .flex.justify-between.items-center.p-2.bg-white.rounded.shadow-sm.group
-            p class="w-full text-gray-800 #{message.role == 'user' ? 'text-right text-sm' : ''}"
+            p class="w-full #{message_class(message)}" data-editor-target="messageContent"
               = "#{message.content} / #{message.role} #{message.updated_at.in_time_zone.strftime('%H:%M')}"
             = button_to ai_message_path(message), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "text-zinc-400 hover:text-red-500 transition duration-150" do
               = ai_delete_button_svg
@@ -30,5 +30,6 @@ div data-controller="editor"
 
   #ai-output-error.text-shadow-neon.p-2 data-editor-target="outputerror" = '/errors if any/'
 
-.p-2
-  = "AiSession ID:#{current_ai_session.id}"
+- if current_ai_session
+  .p-2
+    = "AiSession ID:#{current_ai_session.id}"

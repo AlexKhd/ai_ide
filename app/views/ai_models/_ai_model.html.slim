@@ -1,0 +1,8 @@
+tr class="#{'bg-gray-400' if !ai_model.active}"
+  td = ai_model.id
+  td = ai_model.name
+  td = ai_model.external_id
+  td = number_with_delimiter(ai_model.context_length)
+  td = ai_model.supports_tools ? "Yes" : ""
+  td = ai_model.supports_reasoning ? "Yes" : ""
+  td.text-green-800 = ai_model.is_free? ? "Yes" : ""

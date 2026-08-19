@@ -3,6 +3,17 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   root "home#dashboard"
   resources :ai_connections
+  resources :ai_messages, only: [:destroy, :index] do
+    collection do
+      delete :destroy_all
+    end
+  end
+  resources :ai_models, only: :index do
+    collection do
+      post :sync_models
+      post :apply_sync
+    end
+  end
   resources :app_folders do
     collection do
       get :browse_working_directory
@@ -12,14 +23,6 @@ Rails.application.routes.draw do
   post "/ai/code_suggest", to: "ai#code_suggest"
   get "ai/code_suggestsse"
   get "home/index"
-  resources :ai_connections do
-    collection do
-      post :sync_models
-      post :apply_sync
-    end
-  end
-  resources :ai_messages, only: :destroy
-  resources :ai_models, only: :index
   resources :mcp_tools, only: [:index] do
     member do
       patch :toggle

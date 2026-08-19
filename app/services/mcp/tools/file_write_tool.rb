@@ -28,6 +28,11 @@ module Mcp
 
       def call
         path = input["path"]
+
+        unless Mcp::Security.safe_path?(path)
+          return failure("Access denied. This file path contains protected or restricted system configurations.")
+        end
+
         content = input["content"]
 
         return failure("Missing file path parameter.") if path.blank?

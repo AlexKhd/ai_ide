@@ -7,21 +7,6 @@ class AiConnectionsController < ApplicationController
     @models = AiModel.ordered
   end
 
-  def sync_models
-    service = OpenRouter::AiModelsSyncPreviewService.new
-    @diffs = service.call
-
-    @ai_connections = AiConnection.all
-    @models = AiModel.all
-
-    render :index
-  end
-
-  def apply_sync
-    OpenRouter::AiModelsSyncService.new.call
-    redirect_to ai_connections_path, notice: "Models synced successfully"
-  end
-
   # GET /ai_connections/1 or /ai_connections/1.json
   def show
     @ai_models = AiModel.zero_cost.ordered

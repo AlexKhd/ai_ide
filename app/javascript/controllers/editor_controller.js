@@ -5,10 +5,11 @@ import "prismjs/components/prism-ruby.js" // add other languages as needed
 import "prismjs/themes/prism-tomorrow.css" // dark theme
 
 export default class extends Controller {
-  static targets = ["container", "output", "outputerror", "formarea", "submitButton"]
+  static targets = ["container", "output", "outputerror", "formarea", "submitButton", "messageContent"]
 
   connect() {
     this.initializeMonaco()
+    this.formatAllMessages()
   }
 
   initializeMonaco() {
@@ -26,6 +27,25 @@ export default class extends Controller {
         automaticLayout: true
       })
     })
+  }
+
+  formatAllMessages() {
+    if (!this.hasMessageContentTarget) return
+
+    this.messageContentTargets.forEach(element => {
+      // Grab raw unformatted database markdown strings
+      const rawMarkdown = element.innerText.trim()
+
+      if (rawMarkdown) {
+        // Run marked.parse and replace raw text inside container with styled DOM tokens
+        element.innerHTML = marked.parse(rawMarkdown)
+      }
+    })
+
+    // Fire Prism token highlight parser configuration to colorize code syntax structures
+    if (typeof Prism !== "undefined") {
+      Prism.highlightAll()
+    }
   }
 
   askAiSse(event) {

@@ -1,0 +1,11 @@
+tr
+  td = "#{ai_message.id} / #{ai_message.ai_session_id}"
+  td = ai_message.role
+  - if ai_message.content.present?
+    = td_long_text(ai_message.content, 30)
+  - else
+    td '-*/*/'
+  td = ai_message.name || '-'
+  td = ai_message.tool_call_id || '-'
+  = td_long_text(ai_message.metadata.to_s, 30)
+  td = ai_message.created_at

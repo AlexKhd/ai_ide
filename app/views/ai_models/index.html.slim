@@ -3,26 +3,15 @@
     .flex.items-center.justify-between.mb-8
       h1.text-3xl.font-bold Models
 
-    - if @ai_connections.any?
-      p.text-2xl.font-bold.mb-3 Connections
-      - @ai_connections.each do |c|
-        p.text-1xl.font-bold.mb-3 = "#{c.name} | #{c.ai_model.external_id}"
-    - else
-      p.text-2xl.font-bold.mb-3 No connections!
-
-    .flex.items-center.justify-between.mt-8.mb-4
-      h1.text-4xl.font-bold.text-blue.tracking-tight
-        | Models
-
       .flex.items-center.gap-4
         = button_to "Sync Models",
-          sync_models_ai_connections_path,
+          sync_models_ai_models_path,
           method: :post,
           data: { turbo: false },
           class: "rounded-xl bg-emerald-600 hover:bg-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200"
 
       .flex.items-center.gap-4
-        = button_to "Apply Sync", apply_sync_ai_connections_path, method: :post,
+        = button_to "Apply Sync", apply_sync_ai_models_path, method: :post,
          data: { turbo_confirm: "Apply model changes?" }, class: "rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg"
 
     - if @diffs.present?
@@ -30,29 +19,27 @@
       .mt-8.space-y-8
 
         - if @diffs[:added].any?
-          .rounded-2xl.bg-emerald-950.border.border-emerald-700.p-6
+          .rounded-2xl.border.border-emerald-700.p-6
             h2.text-2xl.font-bold.text-emerald-300.mb-4
               | New Models
 
             table.table
               thead
                 tr
-                  th Name
-                  th ID
-                  th Context
+                  th External ID
+                  th Tools
+                  th Reasoning
+                  th Free
 
               tbody
-                - @diffs[:added].each do |model|
-                  tr
-                    td = model["name"]
-                    td = model["id"]
-                    td = number_with_delimiter(model["context_length"])
+                - @diffs[:added].each do |ai_model|
+                  = render partial: "ai_models/ai_model_diffs", locals: { ai_model: ai_model }
 
         - else
           p.text-green No added models
 
         - if @diffs[:removed].any?
-          .rounded-2xl.bg-red-950.border.border-red-700.p-6
+          .rounded-2xl.border.border-red-700.p-6
             h2.text-2xl.font-bold.text-red-300.mb-4
               | Removed Models
 
@@ -69,7 +56,7 @@
                     td = model.external_id
 
         - if @diffs[:changed].any?
-          .rounded-2xl.bg-yellow-950.border.border-yellow-700.p-6
+          .rounded-2xl.border.border-yellow-700.p-6
             h2.text-2xl.font-bold.text-yellow-300.mb-4
               | Changed Models
 
@@ -92,6 +79,13 @@
                         td = values[0]
                         td = values[1]
 
+    .flex
+      = button_to "Advanded only", ai_models_path, method: :get, params: {advanced_only: 1},
+       class: "rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+      = button_to "All", ai_models_path, method: :get,
+       class: "ms-2 rounded-xl bg-blue-600 hover:bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+
+
     table.table
       thead
         tr
@@ -104,12 +98,4 @@
           th Free
 
       tbody
-        - @models.each do |model|
-          tr class="#{'bg-gray-400' if !model.active}"
-            td = model.id
-            td = model.name
-            td = model.external_id
-            td = number_with_delimiter(model.context_length)
-            td = model.supports_tools ? "Yes" : "No"
-            td = model.supports_reasoning ? "Yes" : "No"
-            td.text-green-800 = model.is_free? ? "Yes" : ""
+        = render @ai_models
