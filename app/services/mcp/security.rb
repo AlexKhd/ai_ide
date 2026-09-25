@@ -4,23 +4,39 @@ module Mcp
     CRITICAL_BANNED_FILES = %w[.env config/master.key config/credentials.yml.enc config/database.yml].freeze
     CRITICAL_BANNED_DIRS  = %w[.git node_modules log tmp].freeze
 
-    def self.safe_path?(relative_path)
-      return false if relative_path.blank?
+    def self.check_path(relative_path)
+      return { safe: false, reason: "Missing file path parameter" } if relative_path.blank?
 
       root_dir = Rails.root.to_s
       full_path = File.expand_path(relative_path, root_dir)
 
       # 1. Path Traversal Safeguard
-      return false unless full_path.start_with?(root_dir)
+      unless full_path.start_with?(root_dir)
+        return { safe: false, reason: "Access denied. Cannot access paths outside the project root directory." }
+      end
 
-      # 2. Critical Fallbacks
-      return false if CRITICAL_BANNED_FILES.include?(File.basename(full_path))
-      CRITICAL_BANNED_DIRS.each { |dir| return false if relative_path.start_with?("#{dir}/") || full_path.include?("/#{dir}/") }
+      # 2. Critical Banned Files
+      if CRITICAL_BANNED_FILES.include?(File.basename(full_path))
+        return { safe: false, reason: "Access denied. File '#{File.basename(full_path)}' contains protected credentials or configuration." }
+      end
 
-      # 3. Enhanced Wildcard .gitignore check
-      return false if gitignored?(relative_path)
+      # 3. Critical Banned Directories
+      CRITICAL_BANNED_DIRS.each do |dir|
+        if relative_path.start_with?("#{dir}/") || full_path.include?("/#{dir}/")
+          return { safe: false, reason: "Access denied. Directory '#{dir}/' is restricted by security policy." }
+        end
+      end
 
-      true
+      # 4. Gitignore Check
+      if gitignored?(relative_path)
+        return { safe: false, reason: "Access denied. Path '#{relative_path}' is matched by .gitignore security rules." }
+      end
+
+      { safe: true }
+    end
+
+    def self.safe_path?(relative_path)
+      check_path(relative_path)[:safe]
     end
 
     private

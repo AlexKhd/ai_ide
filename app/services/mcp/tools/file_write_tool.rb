@@ -29,8 +29,9 @@ module Mcp
       def call
         path = input["path"]
 
-        unless Mcp::Security.safe_path?(path)
-          return failure("Access denied. This file path contains protected or restricted system configurations.")
+        check = Mcp::Security.check_path(path)
+        unless check[:safe]
+          return failure(check[:reason])
         end
 
         content = input["content"]

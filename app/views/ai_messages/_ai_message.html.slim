@@ -1,11 +1,27 @@
-tr
+tr.cursor-pointer.hover:bg-slate-100.transition-colors data-controller="toggle" data-action="click->toggle#toggle"
   td.px-4.py-2 = "#{ai_message.id} / #{ai_message.ai_session_id}"
-  td = ai_message.role
+  td.px-4.py-2 = ai_message.role
   - if ai_message.content.present?
     = td_long_text(ai_message.content, 30)
   - else
-    td '-*/*/'
-  td = ai_message.name || '-'
-  td = ai_message.tool_call_id || '-'
+    td.px-4.py-2 -*/*/-
+  td.px-4.py-2 = ai_message.name || '-'
+  td.px-4.py-2 = ai_message.tool_call_id || '-'
   = td_long_text(ai_message.metadata.to_s, 30)
-  td = ai_message.created_at
+  td.px-4.py-2 = ai_message.created_at
+
+tr.hidden.bg-slate-50
+  td colspan="7" class="p-4 border-b border-slate-300"
+    .space-y-3
+      - if ai_message.content.present?
+        div
+          h4.font-semibold.text-xs.text-slate-600.uppercase.tracking-wider Full Content:
+          pre.mt-1.p-3.bg-white.rounded-lg.border.border-slate-200.text-xs.whitespace-pre-wrap.font-mono.text-slate-800
+            = ai_message.content
+      - if ai_message.metadata.present?
+        div
+          h4.font-semibold.text-xs.text-slate-600.uppercase.tracking-wider Full Metadata:
+          pre.mt-1.p-3.bg-white.rounded-lg.border.border-slate-200.text-xs.whitespace-pre-wrap.font-mono.text-slate-800
+            = JSON.pretty_generate(ai_message.metadata) rescue ai_message.metadata.to_s
+
+

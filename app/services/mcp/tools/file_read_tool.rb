@@ -26,8 +26,9 @@ module Mcp
         path = input["path"]
         return failure("Missing file path parameter") if path.blank?
 
-        unless Mcp::Security.safe_path?(path)
-          return failure("Access denied. This file path contains protected or restricted system configurations.")
+        check = Mcp::Security.check_path(path)
+        unless check[:safe]
+          return failure(check[:reason])
         end
 
         root_dir = Rails.root.to_s

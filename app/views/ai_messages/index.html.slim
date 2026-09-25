@@ -8,15 +8,15 @@
   table.min-w-full.divide-y.divide-slate-500
     thead
       tr
-        th ID/SID
-        th Role
-        th Content
-        th Name
-        th CID
-        th Metadata
-        th Created
+        th.px-4.py-2.text-left ID/SID
+        th.px-4.py-2.text-left Role
+        th.px-4.py-2.text-left Content
+        th.px-4.py-2.text-left Name
+        th.px-4.py-2.text-left CID
+        th.px-4.py-2.text-left Metadata
+        th.px-4.py-2.text-left Created
     tbody.divide-y.divide-slate-300
       = render @ai_messages
 - else
   .p-8.text-center
-    p.text-sm.text-zinc-500 No messahges in the database.
+    p.text-sm.text-zinc-500 No messages in the database.

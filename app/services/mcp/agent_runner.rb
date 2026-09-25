@@ -13,8 +13,8 @@ module Mcp
 
     def process_user_message!(user_prompt)
       # Save the user message to DB
+      file_append('messages', "processing message from user: #{user_prompt}", 2.megabytes)
       @session.ai_messages.create!(role: "user", content: user_prompt)
-      file_append('messages', "processing message: #{user_prompt}", 2.megabytes)
 
       # Start the execution cycle and return its final value
       execute_agent_loop(0)
@@ -47,6 +47,7 @@ module Mcp
         execute_agent_loop(depth + 1)
       else
         # Final response text achieved: Save and return it
+        file_append('messages', "assistant response: #{response[:content]}", 2.megabytes)
         @session.ai_messages.create!(role: "assistant", content: response[:content])
         response[:content]
       end

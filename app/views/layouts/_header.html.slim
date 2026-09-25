@@ -1,4 +1,4 @@
-#navbar.p-3.flex.items-center
+#navbar.p-3.flex.items-center.relative.z-50
   .me-2.text-heading
     = link_to 'AI IDE - HOME', home_index_path,
       class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
@@ -7,7 +7,7 @@
     = link_to 'Connections', ai_connections_path,
       class: "rounded-xl border border-zinc-700 hover:border-zinc-500 bg-zinc-900 px-4 py-1 text-sm font-medium text-gray-300 hover:text-white transition-all duration-200"
 
-  .me-3(data-controller="dropdown")
+  .me-3.relative(data-controller="dropdown")
     button.rounded-xl.border.border-zinc-700.hover:border-zinc-500.bg-zinc-900.px-4.py-1.text-sm.font-medium.text-gray-300.hover:text-white.transition-all.duration-200.flex.items-center.gap-2(
       data-action="click->dropdown#toggle"
       data-dropdown-target="trigger"
@@ -17,7 +17,7 @@
       svg.w-4.h-4(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
         path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3")
 
-    .absolute.mt-2.w-48.rounded-lg.border.border-zinc-600.bg-zinc-800.shadow-lg.hidden(
+    .absolute.mt-2.w-48.rounded-lg.border.border-zinc-600.bg-zinc-800.shadow-lg.z-50.hidden(
       data-dropdown-target="menu"
     )
       = link_to 'Users', users_path,
