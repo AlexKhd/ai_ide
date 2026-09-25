@@ -1,13 +1,20 @@
 module Mcp
   class AgentRunner
-    def initialize(ai_session)
+    include FileHelper
+
+    MAX_DEPTH = 15
+
+    def initialize(ai_session, max_depth: MAX_DEPTH)
       @session = ai_session
       @connection = ai_session.ai_connection
+      @max_depth = max_depth
+      file_append('messages', "-------- Starting messaging, session id: #{@session.id} --------", 2.megabytes)
     end
 
     def process_user_message!(user_prompt)
       # Save the user message to DB
       @session.ai_messages.create!(role: "user", content: user_prompt)
+      file_append('messages', "processing message: #{user_prompt}", 2.megabytes)
 
       # Start the execution cycle and return its final value
       execute_agent_loop(0)
@@ -17,7 +24,8 @@ module Mcp
 
     def execute_agent_loop(depth = 0)
       # Safeguard against run-away infinite loops
-      if depth > 5
+      if depth > @max_depth
+        file_append('messages', "Error: Maximum agent tool execution depth reached without completion.", 2.megabytes)
         return "Error: Maximum agent tool execution depth reached without completion."
       end
 
@@ -66,6 +74,7 @@ module Mcp
     end
 
     def handle_tool_calls(tool_calls, intermediate_content)
+      file_append('messages', "iterating: #{tool_calls} // #{intermediate_content}", 2.megabytes)
       assistant_msg = @session.ai_messages.create!(
         role: "assistant",
         content: intermediate_content,
@@ -119,6 +128,7 @@ module Mcp
         end
 
         # CRUCIAL: Write the 'tool' role record back to history with the exact matching tool_call_id string
+        file_append('messages', "Tool result: #{content_output}", 2.megabytes)
         @session.ai_messages.create!(
           role: "tool",
           name: tool_name,

@@ -3,6 +3,8 @@ require "json"
 
 module OpenRouter
   class ChatCompletion
+    include FileHelper
+
     API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
     def initialize(connection:, messages:, tools: [])
@@ -44,6 +46,7 @@ module OpenRouter
       json = JSON.parse(response.body)
       if json["error"]
         # Log the exact sub-error message (e.g., "invalid field 'tools'") to your console log terminal
+        file_append('messages', "Error: #{json['error']}", 2.megabytes)
         Rails.logger.error "OPENROUTER ERROR DETAILS: #{json['error']}"
         raise StandardError, "Provider returned error: #{json.dig('error', 'message')}"
       end

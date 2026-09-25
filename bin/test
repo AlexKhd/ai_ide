@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -e
+
+# Navigate to the project root directory
+CDPATH="" cd "$(dirname "$0")/.."
+
+export RAILS_ENV="${RAILS_ENV:-test}"
+
+echo "=== Running Rails Test Suite ==="
+
+bin/bundle exec rails test "$@" || status=$?
+
+read -n1 -s -r -p $'Press space to continue...\n' key
+
+exit "${status:-0}"
