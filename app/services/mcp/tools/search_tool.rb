@@ -24,16 +24,39 @@ module Mcp
 
       def call
         query = input["query"]
-        return failure("Missing query") unless query
+        return failure("Missing query") if query.blank?
 
-        # placeholder logic
+        root_dir = Rails.root.to_s
+        matched_files = []
+
+        # Real codebase search across text files
+        Dir.glob("#{root_dir}/**/*.{rb,html,slim,js,json,yml,md,txt}").each do |full_path|
+          relative_path = full_path.sub("#{root_dir}/", "")
+          next unless Mcp::Security.safe_path?(relative_path)
+
+          # Check path match
+          if File.basename(full_path).downcase.include?(query.downcase) || relative_path.downcase.include?(query.downcase)
+            matched_files << relative_path
+            next
+          end
+
+          # Check content match
+          begin
+            content = File.read(full_path)
+            if content.downcase.include?(query.downcase)
+              matched_files << relative_path
+            end
+          rescue
+            # Skip unreadable/binary files
+          end
+        end
+
         success({
           query: query,
-          results: [
-            "Result 1 for #{query}",
-            "Result 2 for #{query}"
-          ]
+          results: matched_files.first(20)
         })
+      rescue => e
+        failure("Search failed: #{e.message}")
       end
     end
   end

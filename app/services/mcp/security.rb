@@ -3,9 +3,13 @@ module Mcp
   module Security
     CRITICAL_BANNED_FILES = %w[.env config/master.key config/credentials.yml.enc config/database.yml].freeze
     CRITICAL_BANNED_DIRS  = %w[.git node_modules log tmp].freeze
+    ALLOWED_FILES         = %w[log/messages.log].freeze
 
     def self.check_path(relative_path)
       return { safe: false, reason: "Missing file path parameter" } if relative_path.blank?
+
+      # Explicit exception allowlist overrides banned dir checks
+      return { safe: true } if ALLOWED_FILES.include?(relative_path)
 
       root_dir = Rails.root.to_s
       full_path = File.expand_path(relative_path, root_dir)

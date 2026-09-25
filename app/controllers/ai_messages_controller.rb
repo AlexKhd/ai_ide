@@ -19,7 +19,7 @@ class AiMessagesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to ai_messages_path, status: :see_other, notice: "All AI messages deleted." }
-      format.turbo_stream { flash.now[:notice] = "All AI messages deleted." }
+      format.turbo_stream { redirect_to ai_messages_path, status: :see_other, notice: "All AI messages deleted." }
     end
   end
 end

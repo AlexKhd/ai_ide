@@ -14,6 +14,7 @@ module OpenRouter
     end
 
     def call
+      retries ||= 0
       uri = URI(API_URL)
       request = Net::HTTP::Post.new(uri)
 
@@ -37,7 +38,7 @@ module OpenRouter
 
       request.body = payload.to_json
 
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true, open_timeout: 10, read_timeout: 30) do |http|
         http.request(request)
       end
 
@@ -61,6 +62,14 @@ module OpenRouter
         content: symbolized_message[:content],
         tool_calls: symbolized_message[:tool_calls]
       }
+    rescue OpenSSL::SSL::SSLError, Errno::ECONNRESET, SocketError => e
+      if (retries += 1) <= 3
+        Rails.logger.warn "OpenRouter SSL/Network error (#{e.message}), retrying attempt #{retries}/3..."
+        sleep 1
+        retry
+      else
+        raise e
+      end
     end
 
     private

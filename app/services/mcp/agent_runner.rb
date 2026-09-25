@@ -3,6 +3,7 @@ module Mcp
     include FileHelper
 
     MAX_DEPTH = 15
+    REQUEST_DELAY_SECONDS = 1.0
 
     def initialize(ai_session, max_depth: MAX_DEPTH)
       @session = ai_session
@@ -42,6 +43,9 @@ module Mcp
       # Check if the LLM wants to read a file or perform an action
       if response[:tool_calls].present?
         handle_tool_calls(response[:tool_calls], response[:content])
+
+        # Pace requests to prevent network/socket congestion and rate-limiting
+        sleep(REQUEST_DELAY_SECONDS) if REQUEST_DELAY_SECONDS.to_f > 0
 
         # Re-enter loop: Pass file contents/results back down to the model
         execute_agent_loop(depth + 1)
