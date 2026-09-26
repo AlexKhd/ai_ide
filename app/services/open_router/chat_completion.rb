@@ -42,6 +42,13 @@ module OpenRouter
         http.request(request)
       end
 
+      limit = response["x-ratelimit-limit"]
+      remaining = response["x-ratelimit-remaining"]
+      if limit.present? && remaining.present?
+        used = limit.to_i - remaining.to_i
+        Rails.logger.info "OPENROUTER RATE LIMIT: #{remaining}/#{limit} remaining (#{used} requests made today)"
+      end
+
       Rails.logger.info "OPENROUTER STATUS: #{response.code}"
 
       json = JSON.parse(response.body)

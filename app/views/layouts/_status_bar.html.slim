@@ -1,0 +1,11 @@
+- if current_ai_session
+  #status-bar.fixed.bottom-0.left-0.right-0.z-40.bg-zinc-900.border-t.border-zinc-800.px-4.py-1.5.text-xs.text-zinc-400.flex.items-center.justify-between.shadow-lg
+    .flex.items-center.gap-4
+      .flex.items-center.gap-2
+        span.w-2.h-2.rounded-full.bg-emerald-500.animate-pulse
+        span.font-semibold.text-zinc-300 AiSession ID:
+        span.mt-1.font-mono.text-zinc-200 = current_ai_session.id
+      .h-3.w-px.bg-zinc-700
+      .flex.items-center.gap-2
+        span.font-semibold.text-zinc-300 Requests:
+        span.mt-1.font-mono.text-indigo-400.font-bold = @request_count || today_request_count
