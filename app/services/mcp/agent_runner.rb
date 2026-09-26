@@ -61,17 +61,29 @@ module Mcp
       history = []
       history << { role: "system", content: @session.system_prompt } if @session.system_prompt.present?
 
+      # Collect all tool_call_id strings that have received responses in session history
+      completed_tool_call_ids = @session.ai_messages.where(role: "tool").pluck(:tool_call_id).compact.map(&:to_s).to_set
+
       @session.ai_messages.order(:created_at).each do |msg|
         payload = { role: msg.role }
 
-        # Cohere strict rule: completely omit content key if it is nil or empty string
+        # Cohere / OpenRouter strict rule: completely omit content key if it is nil or empty string
         payload[:content] = msg.content if msg.content.present?
         payload[:name] = msg.name if msg.name.present?
         payload[:tool_call_id] = msg.tool_call_id if msg.tool_call_id.present?
 
         if msg.role == "assistant" && msg.metadata&.dig("tool_calls").present?
-          payload[:tool_calls] = msg.metadata["tool_calls"]
+          # Filter tool_calls to only include ones that have a matching tool response in history
+          valid_tool_calls = msg.metadata["tool_calls"].select do |tc|
+            tc_id = tc[:id] || tc["id"]
+            completed_tool_call_ids.include?(tc_id.to_s)
+          end
+
+          payload[:tool_calls] = valid_tool_calls if valid_tool_calls.any?
         end
+
+        # Skip assistant messages if they have no content AND no valid completed tool_calls
+        next if msg.role == "assistant" && payload[:content].blank? && payload[:tool_calls].blank?
 
         history << payload
       end
@@ -89,6 +101,20 @@ module Mcp
       tool_calls.each do |call_data|
         # Ensure we can read string keys coming back from OpenRouter JSON responses
         tool_name = call_data.dig(:function, :name) || call_data.dig("function", "name")
+        tool_call_id = call_data[:id] || call_data["id"]
+        raw_args = call_data.dig(:function, :arguments) || call_data.dig("function", "arguments")
+        parsed_args = if raw_args.is_a?(String)
+          begin
+            JSON.parse(raw_args)
+          rescue JSON::ParserError
+            raw_args
+          end
+        else
+          raw_args
+        end
+
+        mcp_tool = ::McpTool.find_by(name: tool_name)
+        next unless mcp_tool
 
         if tool_name == "file_write"
           # Create the tracking record as "pending"
@@ -102,13 +128,6 @@ module Mcp
           # Stop the agent loop right here! Return a special instruction to the user UI
           return "PAUSED_FOR_APPROVAL"
         end
-
-        tool_call_id = call_data[:id] || call_data["id"]
-        raw_args = call_data.dig(:function, :arguments) || call_data.dig("function", "arguments")
-        parsed_args = raw_args.is_a?(String) ? JSON.parse(raw_args) : raw_args
-
-        mcp_tool = ::McpTool.find_by(name: tool_name)
-        next unless mcp_tool
 
         db_tool_call = ::AiToolCall.create!(
           ai_message: assistant_msg,
