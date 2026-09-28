@@ -20,6 +20,10 @@
         th.px-4.py-2.text-left Created
     tbody.divide-y.divide-slate-300
       = render @ai_messages
+  br
+      .flex.items-center.justify-center.gap-2
+        == @pagy.series_nav
+        == @pagy.info_tag
 - else
   .p-8.text-center
     p.text-sm.text-zinc-500 No messages in the database.

@@ -68,3 +68,4 @@ group :test do
 end
 
 gem "slim-rails"
+gem 'pagy', '~> 43.6'

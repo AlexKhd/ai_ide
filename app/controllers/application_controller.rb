@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include Pagy::Method
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -31,6 +32,7 @@ class ApplicationController < ActionController::Base
   private
 
     def get_current_ai_session
+      return nil unless current_user.present?
       AiSession.first_or_create!(
         user_id: current_user.id,
         ai_connection_id: current_connection.id,

@@ -1,7 +1,7 @@
 class AiMessagesController < ApplicationController
 
   def index
-    @ai_messages = AiMessage.ordered
+    @pagy, @ai_messages = pagy(:offset, AiMessage.ordered)
   end
 
   def destroy
