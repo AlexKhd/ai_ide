@@ -1,8 +1,27 @@
-tr class="#{'bg-gray-400' if !ai_model.active}"
-  td = ai_model.id
-  td = ai_model.name
-  td = ai_model.external_id
-  td = number_with_delimiter(ai_model.context_length)
-  td = ai_model.supports_tools ? "Yes" : ""
-  td = ai_model.supports_reasoning ? "Yes" : ""
-  td.text-green-800 = ai_model.is_free? ? "Yes" : ""
+tr class="#{model_class(ai_model)}"
+  td.px-6.py-4.font-medium
+    = ai_model.id
+
+  td.px-6.py-4.font-medium.text-gray-900
+    = ai_model.name
+
+  td.px-6.py-4.font-mono.text-xs.text-gray-600
+    = ai_model.external_id
+
+  td.px-6.py-4.text-right.tabular-nums
+    = number_with_delimiter(ai_model.context_length)
+
+  td.px-6.py-4.text-center
+    - if ai_model.supports_tools
+      span.inline-flex.items-center.rounded-full.bg-blue-100.px-2.5.py-0.5.text-xs.font-medium.text-blue-800
+        | Yes
+
+  td.px-6.py-4.text-center
+    - if ai_model.supports_reasoning
+      span.inline-flex.items-center.rounded-full.bg-purple-100.px-2.5.py-0.5.text-xs.font-medium.text-purple-800
+        | Yes
+
+  td.px-6.py-4.text-center
+    - if ai_model.is_free?
+      span.inline-flex.items-center.rounded-full.bg-green-100.px-2.5.py-0.5.text-xs.font-medium.text-green-800
+        | Yes
