@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_27_095512) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_10_031337) do
   create_table "ai_connections", force: :cascade do |t|
     t.string "name"
     t.string "provider"
@@ -104,6 +104,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_095512) do
     t.index ["user_id"], name: "index_app_folders_on_user_id"
   end
 
+  create_table "deployments", force: :cascade do |t|
+    t.integer "vserver_id", null: false
+    t.string "status"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string "commit_sha"
+    t.text "output"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vserver_id"], name: "index_deployments_on_vserver_id"
+  end
+
   create_table "mcp_tools", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -139,6 +151,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_095512) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  create_table "vservers", force: :cascade do |t|
+    t.string "name"
+    t.string "host"
+    t.string "healthcheck"
+    t.integer "port"
+    t.string "username"
+    t.string "local_path"
+    t.boolean "enabled"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "server_status"
+    t.string "app_status"
+    t.datetime "last_checked_at"
+  end
+
   add_foreign_key "ai_connections", "ai_models", column: "model_id"
   add_foreign_key "ai_messages", "ai_sessions"
   add_foreign_key "ai_sessions", "ai_connections"
@@ -147,5 +174,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_27_095512) do
   add_foreign_key "ai_tool_calls", "ai_messages"
   add_foreign_key "ai_tool_calls", "mcp_tools"
   add_foreign_key "app_folders", "users"
+  add_foreign_key "deployments", "vservers"
   add_foreign_key "sessions", "users"
 end

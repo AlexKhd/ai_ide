@@ -1,5 +1,16 @@
 module ApplicationHelper
 
+  def vps_status_classes(status)
+    case status
+    when "online", "healthy"
+      "bg-green-100 text-green-800"
+    when "offline", "unhealthy"
+      "bg-red-100 text-red-800"
+    else
+      "bg-gray-100 text-gray-600"
+    end
+  end
+
   def message_class(message)
     return 'text-blue-800 text-right text-sm' if message.role == 'user'
     return 'text-gray-600 text-center text-sm' if message.role == 'tool'

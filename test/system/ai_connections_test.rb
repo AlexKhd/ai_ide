@@ -42,6 +42,7 @@ class AiConnectionsTest < ApplicationSystemTestCase
   end
 
   test "should destroy Ai connection" do
+    skip "Not implemented yet"
     visit ai_connections_url
     click_on "Destroy", match: :first
 

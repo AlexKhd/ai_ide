@@ -1,0 +1,8 @@
+p style="color: green" = notice
+
+== render @vserver
+
+.flex.p-3.mt-2.gap-2
+  =< link_to "Back to list", vservers_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+
+  = button_to "Destroy", @vserver, method: :delete, class: "rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"

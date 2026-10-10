@@ -33,6 +33,7 @@ class ApplicationController < ActionController::Base
 
     def get_current_ai_session
       return nil unless current_user.present?
+      return nil unless current_connection.present?
       AiSession.first_or_create!(
         user_id: current_user.id,
         ai_connection_id: current_connection.id,

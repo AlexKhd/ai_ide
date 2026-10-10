@@ -8,7 +8,7 @@ export RAILS_ENV="${RAILS_ENV:-test}"
 
 echo "=== Running Rails Test Suite ==="
 
-bin/bundle exec rails test "$@" || status=$?
+bin/bundle exec rails test:all "$@" || status=$?
 
 read -n1 -s -r -p $'Press space to continue...\n' key
 

@@ -1,0 +1,38 @@
+div id="#{dom_id vserver}"
+  p
+    strong Name:
+    =< vserver.name
+  p
+    strong Host:
+    =< vserver.host
+  p
+    strong Healthcheck:
+    =< vserver.healthcheck
+  p
+    strong Port:
+    =< vserver.port
+  p
+    strong Username:
+    =< vserver.username
+  p
+    strong Local path:
+    =< vserver.local_path
+  p
+    strong Enabled:
+    =< vserver.enabled
+
+    hr
+
+  p
+    strong Server status:
+    span class="ml-2 rounded px-2 py-1 text-sm font-medium #{vps_status_classes(vserver.server_status)}"
+      = vserver.server_status || "Unknown"
+
+  p
+    strong App status:
+    span class="ml-2 rounded px-2 py-1 text-sm font-medium #{vps_status_classes(vserver.app_status)}"
+      = vserver.app_status || "Unknown"
+
+  p
+    strong Last checked:
+    =< vserver.last_checked_at ? "#{time_ago_in_words(vserver.last_checked_at)} ago (#{l(vserver.last_checked_at, format: :short)})" : "Never"
