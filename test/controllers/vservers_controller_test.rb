@@ -9,7 +9,6 @@ class VserversControllerTest < ActionDispatch::IntegrationTest
       email_address: @admin.email_address,
       password: @admin.password
     }
-
   end
 
   test "should get index" do

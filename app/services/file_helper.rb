@@ -22,5 +22,4 @@ module FileHelper
       file.puts(timestamped_text)
     end
   end
-
 end

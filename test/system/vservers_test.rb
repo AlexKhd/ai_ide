@@ -52,8 +52,11 @@ class VserversTest < ApplicationSystemTestCase
   end
 
   test "should destroy Vserver" do
-    visit status_vserver_path(@vserver)
-    click_on "Destroy", match: :first
+    visit vservers_url
+    assert_text "VPS List"
+    accept_confirm("Delete this VPS record?") do
+      click_on "Destroy", match: :first
+    end
 
     assert_text "VPS record was successfully destroyed"
     assert_selector "h1", text: "VPS List"

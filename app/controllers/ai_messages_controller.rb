@@ -1,5 +1,4 @@
 class AiMessagesController < ApplicationController
-
   def index
     @pagy, @ai_messages = pagy(:offset, AiMessage.ordered)
   end

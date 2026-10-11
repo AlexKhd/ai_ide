@@ -1,7 +1,6 @@
-div id="#{dom_id vserver}"
-  p
-    strong Name:
-    =< vserver.name
+.w-full id="#{dom_id vserver}"
+  .text-2xl.font-bold.text-right
+    = vserver.name
   p
     strong Host:
     =< vserver.host
@@ -34,5 +33,5 @@ div id="#{dom_id vserver}"
       = vserver.app_status || "Unknown"
 
   p
-    strong Last checked:
-    =< vserver.last_checked_at ? "#{time_ago_in_words(vserver.last_checked_at)} ago (#{l(vserver.last_checked_at, format: :short)})" : "Never"
+    strong Last check:
+    =< vserver.last_checked_at ? "#{time_ago_in_words(vserver.last_checked_at)} ago" : "Never"

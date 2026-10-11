@@ -44,7 +44,10 @@ class AiConnectionsTest < ApplicationSystemTestCase
   test "should destroy Ai connection" do
     skip "Not implemented yet"
     visit ai_connections_url
-    click_on "Destroy", match: :first
+    assert_selector "h1", text: "AI Connections"
+    accept_confirm("Delete this AI connection?") do
+      click_on "Destroy", match: :first
+    end
 
     assert_text "Ai connection was successfully destroyed"
   end

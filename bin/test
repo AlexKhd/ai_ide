@@ -10,6 +10,14 @@ echo "=== Running Rails Test Suite ==="
 
 bin/bundle exec rails test:all "$@" || status=$?
 
+echo "=== Running Rubocop ==="
+
+bin/rubocop
+
+echo "=== Running Brakeman ==="
+
+bin/brakeman --no-pager || status=$?
+
 read -n1 -s -r -p $'Press space to continue...\n' key
 
 exit "${status:-0}"

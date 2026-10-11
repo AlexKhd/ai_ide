@@ -1,8 +1,27 @@
-p style="color: green" = notice
+.p-2
+  .text-2xl.font-bold.text-center
+    = @vserver.name
 
-== render @vserver
+  p
+    strong Host:
+    =< @vserver.host
+  p
+    strong Healthcheck:
+    =< @vserver.healthcheck
+  p
+    strong Port:
+    =< @vserver.port
+  p
+    strong Username:
+    =< @vserver.username
+  p
+    strong Local path:
+    =< @vserver.local_path
+  p
+    strong Enabled:
+    =< @vserver.enabled
 
-.flex.p-3.mt-2.gap-2
-  =< link_to "Back to list", vservers_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+  .text-2xl.font-bold.text-center Deployment
 
-  = button_to "Destroy", @vserver, method: :delete, class: "rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+.p-3.mt-2
+  = link_to "Back to list", vservers_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"

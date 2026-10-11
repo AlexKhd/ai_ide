@@ -1,5 +1,4 @@
 module ApplicationHelper
-
   def vps_status_classes(status)
     case status
     when "online", "healthy"
@@ -14,7 +13,7 @@ module ApplicationHelper
   def message_class(message)
     return 'text-blue-800 text-right text-sm' if message.role == 'user'
     return 'text-gray-600 text-center text-sm' if message.role == 'tool'
-    return 'text-gray-800' # default
+    'text-gray-800' # default
   end
 
   def model_class(model)
@@ -29,19 +28,17 @@ module ApplicationHelper
     cut_length.present? ? cl = cut_length : cl = 10 # default value
     if comment
       if comment.to_s.length > cl+3
-        concat(content_tag(:td, comment.to_s, data: {controller: "tooltips",
-         bs_toggle: "tooltip", bs_title: comment, bs_placement: "top"}) do
+        concat(content_tag(:td, comment.to_s, data: { controller: "tooltips",
+         bs_toggle: "tooltip", bs_title: comment, bs_placement: "top" }) do
           concat(comment.truncate(cl+3))
         end)
-        return
       else
         concat(content_tag(:td, comment.to_s) do
           concat(comment)
         end)
-        return
       end
     else
-      #return
+      # return
     end
   end
 end
