@@ -10,6 +10,9 @@ application.register("dropdown", DropdownController)
 import EditorController from "./editor_controller"
 application.register("editor", EditorController)
 
+import FlashController from "./flash_controller"
+application.register("flash", FlashController)
+
 import FolderPickerController from "./folder_picker_controller"
 application.register("folder_picker", FolderPickerController)
 
@@ -18,4 +21,3 @@ application.register("hello", HelloController)
 
 import ToggleController from "./toggle_controller"
 application.register("toggle", ToggleController)
-

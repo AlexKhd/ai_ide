@@ -3,5 +3,7 @@ class CheckVserverHealthJob < ApplicationJob
 
   def perform(vserver)
     VserverHealthChecker.new(vserver).call
+  ensure
+    vserver.update!(checking: false)
   end
 end

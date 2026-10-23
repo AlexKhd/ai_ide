@@ -1,10 +1,12 @@
 require "net/http"
 require "socket"
 require "timeout"
+include FileHelper
 
 class VserverHealthChecker
   def initialize(vserver)
     @vserver = vserver
+    file_append('vps_check', "-------- Starting check vps: #{vserver.inspect}", 1.megabytes, clear: true)
   end
 
   def call
@@ -22,6 +24,7 @@ class VserverHealthChecker
 
   def check_server
     uri = URI.parse(@vserver.host)
+    file_append('vps_check', "check VPS by address: #{uri.inspect}", 1.megabytes)
 
     Socket.tcp(
       uri.host,
@@ -40,12 +43,16 @@ class VserverHealthChecker
       @vserver.healthcheck.delete_prefix("/")
     )
 
+    file_append('vps_check', "check APP by address: #{uri.inspect}", 1.megabytes)
+
     return "unhealthy" unless %w[http https].include?(uri.scheme)
 
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = uri.scheme == "https"
     http.open_timeout = 3
     http.read_timeout = 3
+
+    file_append('vps_check', "check APP by address: #{http.inspect}", 1.megabytes)
 
     response = http.get(uri.request_uri)
 

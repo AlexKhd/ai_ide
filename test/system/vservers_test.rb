@@ -19,7 +19,7 @@ class VserversTest < ApplicationSystemTestCase
   test "should create vserver" do
     visit vservers_url
     assert_text "VPS List"
-    click_on "New VPS"
+    click_on "Add VPS"
 
     check "Enabled" if @vserver.enabled
     fill_in "Healthcheck", with: @vserver.healthcheck

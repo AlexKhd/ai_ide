@@ -12,12 +12,16 @@ class VserversController < ApplicationController
   def check_status
     @vserver = Vserver.find(params[:id])
 
-    CheckVserverHealthJob.perform_later(@vserver)
+    if @vserver.update(checking: true)
+      CheckVserverHealthJob.perform_later(@vserver)
+    end
 
     redirect_to vservers_path, notice: "Health check started."
+  rescue StandardError => e
+    @vserver&.update(checking: false)
+    raise e
   end
 
-  # GET /vservers/new
   def new
     @vserver = Vserver.new
   end

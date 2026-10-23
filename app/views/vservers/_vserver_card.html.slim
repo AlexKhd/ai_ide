@@ -1,0 +1,15 @@
+.rounded-2xl.border.border-zinc-800.p-4.shadow-xl.hover:border-purple-500.transition-all.duration-200 id=dom_id(vserver, :card)
+  .flex.items-start.justify-between
+    == render vserver
+
+  .flex.mt-2.gap-2.justify-center
+    - if vserver.checking?
+      .flex.items-center.gap-2.rounded-xl.bg-zinc-800.px-4.py-2.text-sm.font-semibold.text-white role="status"
+        .vps-spinner
+        span Checking...
+    - else
+      = button_to "Check status", check_status_vserver_path(vserver), method: :post, class: "rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-500"
+
+    = link_to "Manage/Status", status_vserver_path(vserver), class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+    = link_to "Edit", edit_vserver_path(vserver), class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+    = link_to "Destroy", vserver, data: { turbo_method: :delete, turbo_confirm: "Delete this VPS record?" }, class: "rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-red-500"

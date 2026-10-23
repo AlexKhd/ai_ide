@@ -1,18 +1,12 @@
 .flex.items-center.justify-center.mb-8
   h1.text-3xl.font-bold VPS List
 
+= turbo_stream_from "vservers"
+
 - if @vservers.any?
   #vservers.grid.grid-cols-1.md:grid-cols-2.gap-6.p-3
     - @vservers.each do |vserver|
-      .rounded-2xl.border.border-zinc-800.p-4.shadow-xl.hover:border-purple-500.transition-all.duration-200
-        .flex.items-start.justify-between
-          == render vserver
-        .flex.mt-2.gap-2.justify-center
-          = link_to "Status", status_vserver_path(vserver), class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
-          = button_to "Check status", check_status_vserver_path(vserver), method: :post, class: "rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
-          = link_to "Edit", edit_vserver_path(vserver), class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
-          = link_to "Destroy", vserver,
-           data: {turbo_method: :delete, turbo_confirm: "Delete this VPS record?"},
-            class: "rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-red-500"
+      = render "vserver_card", vserver: vserver
 
-.p-3 = link_to "New VPS", new_vserver_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
+.p-3
+  = link_to "Add VPS", new_vserver_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"
