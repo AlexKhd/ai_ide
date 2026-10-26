@@ -1,6 +1,7 @@
 .min-h-screen.mt-4
   .mx-auto.max-w-2xl
 
-    h1.mb-8.text-3xl.font-bold Edit VPS
+    h1.mb-8.text-3xl.font-bold
+      = "Edit VPS #{@vserver.name}"
 
     == render "form", vserver: @vserver

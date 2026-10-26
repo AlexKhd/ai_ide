@@ -113,6 +113,6 @@ class VserversController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def vserver_params
-      params.expect(vserver: [ :name, :host, :healthcheck, :port, :username, :local_path, :enabled ])
+      params.expect(vserver: [ :name, :host, :healthcheck, :port, :username, :local_path, :enabled, :ssh_port ])
     end
 end
