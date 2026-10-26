@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_121752) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_000855) do
   create_table "ai_connections", force: :cascade do |t|
     t.string "name"
     t.string "provider"
@@ -165,6 +165,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_121752) do
     t.string "app_status"
     t.datetime "last_checked_at"
     t.boolean "checking", default: false, null: false
+    t.integer "ssh_port", default: 22, null: false
   end
 
   add_foreign_key "ai_connections", "ai_models", column: "model_id"

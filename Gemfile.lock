@@ -411,6 +411,7 @@ DEPENDENCIES
   jbuilder
   jsbundling-rails
   kamal
+  net-ssh
   pagy (~> 43.6)
   propshaft
   puma (>= 5.0)

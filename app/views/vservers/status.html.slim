@@ -1,27 +1,150 @@
 .p-2
   .text-2xl.font-bold.text-center
-    = @vserver.name
+    = "#{@vserver.name} - #{@vserver.host}"
 
-  p
-    strong Host:
-    =< @vserver.host
-  p
-    strong Healthcheck:
-    =< @vserver.healthcheck
-  p
-    strong Port:
-    =< @vserver.port
-  p
-    strong Username:
-    =< @vserver.username
-  p
-    strong Local path:
-    =< @vserver.local_path
-  p
-    strong Enabled:
-    =< @vserver.enabled
+  - firewall = @firewall_result&.data || {}
 
-  .text-2xl.font-bold.text-center Deployment
+  - if @firewall_result&.success?
+    .grid.grid-cols-1.gap-4.sm:grid-cols-2.lg:grid-cols-4
+      / SSH connectivity
+      .rounded-lg.bg-gray-50.p-4
+        p.text-sm.font-medium.text-gray-500 SSH Connection
+        .mt-2.flex.items-center.gap-2
+          span.h-2.w-2.rounded-full.bg-green-500
+          span.text-sm.font-semibold.text-gray-900 Connected
+
+      / UFW installation
+      .rounded-lg.bg-gray-50.p-4
+        p.text-sm.font-medium.text-gray-500 UFW Installation
+        .mt-2.flex.items-center.gap-2
+          - if firewall[:ufw_installed]
+            span.h-2.w-2.rounded-full.bg-green-500
+            span.text-sm.font-semibold.text-gray-900 Installed
+          - else
+            span.h-2.w-2.rounded-full.bg-red-500
+            span.text-sm.font-semibold.text-red-700 Missing
+
+      / UFW activity
+      .rounded-lg.bg-gray-50.p-4
+        p.text-sm.font-medium.text-gray-500 Firewall
+        .mt-2.flex.items-center.gap-2
+          - if firewall[:ufw_active]
+            span.h-2.w-2.rounded-full.bg-green-500
+            span.text-sm.font-semibold.text-green-700 Active
+          - else
+            span.h-2.w-2.rounded-full.bg-amber-500
+            span.text-sm.font-semibold.text-amber-700 Inactive
+
+      / Helper installation
+      .rounded-lg.bg-gray-50.p-4
+        p.text-sm.font-medium.text-gray-500 Management Helper
+        .mt-2.flex.items-center.gap-2
+          - if firewall[:helper_installed]
+            span.h-2.w-2.rounded-full.bg-green-500
+            span.text-sm.font-semibold.text-gray-900 Installed
+          - else
+            span.h-2.w-2.rounded-full.bg-amber-500
+            span.text-sm.font-semibold.text-amber-700 Missing
+
+    / Firewall rules
+    .mt-8.ms-2
+      h3.text-sm.font-semibold.text-gray-900 Configured Firewall Rules
+      p.mt-1.text-sm.text-gray-500
+        | Expected application and administration ports.
+
+      .mt-4.overflow-hidden.rounded-lg.ring-1.ring-gray-200
+        table.min-w-full.divide-y.divide-gray-200
+          thead.bg-gray-50
+            tr
+              th.px-4.py-3.text-left.text-xs.font-semibold.uppercase.tracking-wider.text-gray-500 Service
+              th.px-4.py-3.text-left.text-xs.font-semibold.uppercase.tracking-wider.text-gray-500 Port
+              th.px-4.py-3.text-left.text-xs.font-semibold.uppercase.tracking-wider.text-gray-500 Status
+          tbody.divide-y.divide-gray-200.bg-white
+            - { "SSH" => [22, :ssh_rule], "HTTP" => [80, :http_rule], "HTTPS" => [443, :https_rule] }.each do |service, config|
+              - port, key = config
+              tr
+                td.whitespace-nowrap.px-4.text-sm.font-medium.text-gray-900 = service
+                td.whitespace-nowrap.px-4.text-sm.text-gray-500 = "#{port}/tcp"
+                td.whitespace-nowrap.px-4
+                  - if firewall[key]
+                    span.inline-flex.items-center.rounded-full.bg-green-100.px-2.py-1.text-xs.font-medium.text-green-800
+                      | Allowed
+                  - else
+                    span.inline-flex.items-center.rounded-full.bg-red-100.px-2.py-1.text-xs.font-medium.text-red-800
+                      | Not detected
+
+    / Raw diagnostic output
+    .mt-4.ms-2
+      details.group
+        summary.cursor-pointer.text-sm.font-medium.text-gray-700.hover:text-gray-900
+          | View firewall diagnostics
+        .mt-3.space-y-4
+          div
+            h4.text-xs.font-semibold.uppercase.tracking-wider.text-gray-500 UFW Status
+            pre.mt-2.overflow-x-auto.rounded-lg.bg-gray-900.p-4.text-xs.text-green-300 = firewall[:raw_status]
+          div
+            h4.text-xs.font-semibold.uppercase.tracking-wider.text-gray-500 Firewall Rules
+            pre.mt-2.overflow-x-auto.rounded-lg.bg-gray-900.p-4.text-xs.text-green-300 = firewall[:raw_rules]
+
+  - else
+    .rounded-lg.border.border-red-200.bg-red-50.p-4.mt-3
+      .flex.gap-3
+        div
+          p.text-sm.font-semibold.text-red-800 Firewall status unavailable
+          p.mt-1.text-sm.text-red-700
+            = @firewall_result&.message || "Unable to retrieve firewall status."
+
+  / Actions
+  .mt-6.flex.flex-wrap.items-center.gap-3.border-t.border-gray-200.pt-5
+    = link_to "Refresh Status", status_vserver_path(@vserver),
+     class: "rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500"
+    = link_to "Firewall", firewall_vserver_path(@vserver),
+     class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-500"
+    - unless firewall[:helper_installed]
+      = button_to "Install Firewall Helper", install_firewall_helper_vserver_path(@vserver), method: :post,
+       class: "inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+
+    - if firewall[:helper_installed] && !firewall[:ufw_active]
+      = button_to "Apply Firewall Baseline", apply_firewall_baseline_vserver_path(@vserver),
+       method: :post, form: { data: { turbo_confirm: "This will enable UFW and configure the baseline firewall rules. Make sure SSH access is allowed before continuing." } },
+        class: "inline-flex items-center rounded-lg bg-red-600 px-4 py-2"
+
+        = button_to "Refresh Status", status_vserver_path(@vserver), method: :get,
+         class: "btn btn-outline-secondary me-2"
+
+
+        - unless firewall[:helper_installed]
+          = button_to "Install Firewall Helper", install_firewall_helper_vserver_path(@vserver), method: :post,
+           class: "btn btn-primary me-2"
+
+        - if firewall[:helper_installed] && !firewall[:ufw_active]
+          = button_to "Apply Firewall Baseline",
+                      apply_firewall_baseline_vserver_path(@vserver),
+                      method: :post,
+                      class: "btn btn-danger",
+                      form: { data: { turbo_confirm: "This will enable UFW and configure the baseline firewall rules. Continue?" } }
+
+.text-2xl.font-bold.text-center Deployment
+
+.grid.grid-cols-1.gap-4.sm:grid-cols-2.lg:grid-cols-4
+  .rounded-lg.bg-gray-50.p-4
+    p
+      strong Healthcheck:
+      =< @vserver.healthcheck
+
+  .rounded-lg.bg-gray-50.p-4
+    p
+      strong Port:
+      =< @vserver.port
+
+  .rounded-lg.bg-gray-50.p-4
+    p
+      strong Username:
+      =< @vserver.username
+  .rounded-lg.bg-gray-50.p-4
+    p
+      strong Local path:
+      =< @vserver.local_path
 
 .p-3.mt-2
   = link_to "Back to list", vservers_path, class: "rounded-xl bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-500"

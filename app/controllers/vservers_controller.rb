@@ -1,5 +1,5 @@
 class VserversController < ApplicationController
-  before_action :set_vserver, only: %i[ status edit update destroy ]
+  before_action :set_vserver, only: %i[ status firewall configure_firewall edit update destroy ]
 
   # GET /vservers or /vservers.json
   def index
@@ -7,6 +7,43 @@ class VserversController < ApplicationController
   end
 
   def status
+    @firewall_result = VserverFirewallService.new(@vserver).status
+  end
+
+  def firewall
+    @firewall_result = VserverFirewallService.new(@vserver).status
+  end
+
+  def configure_firewall
+    # Add authentication and authorization checks here.
+
+    result = VserverFirewallService.new(@vserver).apply_baseline
+
+    if result.success?
+      redirect_to firewall_vserver_path(@vserver),
+                  notice: "Firewall configuration applied."
+    else
+      redirect_to firewall_vserver_path(@vserver),
+                  alert: result.message
+    end
+  end
+
+  def install_firewall_helper
+    @vserver = Vserver.find(params[:id])
+
+    result = VserverFirewallService.new(@vserver).install_helper
+
+    redirect_to status_vserver_path(@vserver), (result.success? ? :notice : :alert) => result.message
+  end
+
+  def apply_firewall_baseline
+    @vserver = Vserver.find(params[:id])
+
+    # Add authorization checks before enabling the firewall.
+
+    result = VserverFirewallService.new(@vserver).apply_baseline
+
+    redirect_to status_vserver_path(@vserver), (result.success? ? :notice : :alert) => result.message
   end
 
   def check_status

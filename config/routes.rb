@@ -39,6 +39,10 @@ Rails.application.routes.draw do
     get :status
     post :deploy
     post :check_status
+    get :firewall
+    post :configure_firewall
+    post :install_firewall_helper
+    post :apply_firewall_baseline
   end
 end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

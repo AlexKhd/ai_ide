@@ -69,3 +69,4 @@ end
 
 gem "slim-rails"
 gem 'pagy', '~> 43.6'
+gem "net-ssh"
